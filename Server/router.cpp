@@ -1,13 +1,15 @@
 #include "router.h"
 
-Router::Router(QObject *parent)
+Router::Router(QObject* parent)
 	: QObject(parent)
 {
 }
 
-Router::~Router() {
-	for (auto control: controls)
+Router::~Router()
+{
+    for (auto control : controls) {
 		delete control;
+    }
 }
 
 void Router::addController(IController* controller)
@@ -31,7 +33,7 @@ void Router::onRequestReceived(const Request& request) {
 }
 
 Router* Router::createDefault() {
-	Router *router = new Router;
+    Router* router = new Router;
 	router->addController(new TestController);
 	return router;
 }

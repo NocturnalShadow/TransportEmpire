@@ -3,8 +3,6 @@
 #include "controller.h"
 #include "testcontroller.hpp"
 
-#include <vector>
-
 #include <QObject>
 #include <QVector>
 
@@ -15,14 +13,15 @@ private:
 	QVector<IController*> controls;
 
 public:
-	explicit Router(QObject *parent = 0);
+    explicit Router(QObject* parent = nullptr);
 	~Router();
 
 public:
 	void addController(IController* controller);
 	void addControllers(QVector<IController*> controls);
 
-	static Router* createDefault();
+public: // factory methods
+    static Router* createDefault();
 
 public slots:
 	void onRequestReceived(const Request& request);

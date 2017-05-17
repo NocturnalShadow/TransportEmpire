@@ -14,13 +14,13 @@ public:
 	~TestController(){}
 
 private:
-	QJsonValue prevData;
+    QJsonObject prevData;
 
 public slots:
 	void onRequestReceived(const Request& request) override {
 		QString req = request.getCommand();
-		if		(req == "login") {
-			QJsonObject d    = request.getData().toObject();
+        if (req == "login") {
+            QJsonObject d    = request.getData();
 			QString login    = d["name"].toString();
 			QString password = d["password"].toString();
 			Reply reply(request);

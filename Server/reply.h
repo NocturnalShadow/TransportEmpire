@@ -1,5 +1,4 @@
-#ifndef REPLY_H
-#define REPLY_H
+#pragma once
 
 #include "request.h"
 
@@ -18,27 +17,27 @@ enum class ResponseCode {
 class Reply
 {
 private:
-	QString command;
-	ResponseCode code = ResponseCode::OK;
-	QJsonValue data = QJsonObject();
-	Role role = Role::CUSTOMER;
+    QString         command;
+    ResponseCode    code;
+    Role            role;
+
+    QJsonObject     data;
 
 public:
-	Reply() = default;
 	Reply(const Request& request);
 
 public:
-	void setCode(ResponseCode cod);
-	void setRole(Role rol);
-	QString getCommand() const;
-	QJsonValue &getDataRef();
-	Role getRole() const;
+    QJsonObject&    getDataRef();
+    QString         getCommand()    const;
+    Role            getRole()       const;
 
-	QString toString() const;
-	QByteArray toByteArray() const;
+    void setCode(ResponseCode _code);
+    void setRole(Role _role);
+
+    QByteArray  toByteArray()        const;
+    QString     toString()           const;
 
 private:
-	QJsonObject createJsonObject() const;
+    QJsonDocument toJsonDocument()  const;
 };
 
-#endif // REPLY_H

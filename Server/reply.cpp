@@ -1,44 +1,46 @@
 #include "reply.h"
 
-Reply::Reply(const Request& request) {
-	command = request.getCommand();
-	role = request.getRole();
+Reply::Reply(const Request& request)
+    : command   { request.getCommand()  },
+      role      { request.getRole()     },
+      code      { request.hasError() ?
+                      ResponseCode::BadRequest :
+                      ResponseCode::OK  }
+{
 }
 
-void Reply::setCode(ResponseCode cod) {
-	code = cod;
+void Reply::setCode(ResponseCode _code) {
+    code = _code;
 }
 
-void Reply::setRole(Role rol) {
-	role = rol;
+void Reply::setRole(Role _role) {
+    role = _role;
 }
 
 QString Reply::getCommand() const {
 	return command;
 }
 
-QJsonValue& Reply::getDataRef() {
+Role Reply::getRole() const {
+    return role;
+}
+
+QJsonObject& Reply::getDataRef() {
 	return data;
 }
 
-Role Reply::getRole() const {
-	return role;
-}
-
 QString Reply::toString() const {
-	QJsonDocument json(createJsonObject());
-	return json.toJson(QJsonDocument::Compact);
+    return toJsonDocument().toJson(QJsonDocument::Compact);
 }
 
 QByteArray Reply::toByteArray() const {
-	QJsonDocument json(createJsonObject());
-	return json.toBinaryData();
+    return toJsonDocument().toBinaryData();
 }
 
-QJsonObject Reply::createJsonObject() const {
-	QJsonObject rep;
-	rep["response"] = command;
-	rep["code"] = int(code);
-	rep["data"] = data;
-	return rep;
+QJsonDocument Reply::toJsonDocument() const {
+    QJsonObject reply;
+    reply["command"]    = command;
+    reply["code"]       = static_cast<int>(code);
+    reply["data"]       = data;
+    return QJsonDocument{ reply };
 }

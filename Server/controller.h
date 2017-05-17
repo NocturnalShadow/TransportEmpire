@@ -9,7 +9,9 @@ class IController : public QObject
 {
 	Q_OBJECT
 public:
-	virtual ~IController(){}
+    virtual ~IController()
+    {
+    }
 
 public slots:
 	virtual void onRequestReceived(const Request& request) = 0;

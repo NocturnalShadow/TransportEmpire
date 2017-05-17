@@ -1,5 +1,4 @@
-#ifndef REQUEST_H
-#define REQUEST_H
+#pragma once
 
 #include <QString>
 #include <QJsonObject>
@@ -14,23 +13,27 @@ enum class Role {
 class Request
 {
 private:
-	QString command;
-	QJsonValue data;
-	Role role = Role::CUSTOMER;
+    QString         command;
+    Role            role;
+
+    QJsonObject     data;
+
+    bool syntaxError = false;
 
 public:
-	Request(const QString& _data, Role rol = Role::CUSTOMER);
-	Request(const QByteArray& _data, Role rol = Role::CUSTOMER);
+    Request(const QString& message, Role _role = Role::CUSTOMER);
+    Request(const QByteArray& message, Role _role = Role::CUSTOMER);
 
 public:
-	Role getRole()              const;
-	QString getCommand()        const;
-	QJsonValue getData()        const;
+    const QString& getCommand()     const;
+    const QJsonObject& getData()    const;
 
-	void setRole(Role rol);
+    Role getRole()                  const;
+    bool hasError()                 const;
+
+    void setRole(Role _role);
 
 private:
-	void parseJSON(const QJsonDocument &json);
+    void initialize(const QByteArray& message);
 };
 
-#endif // REQUEST_H

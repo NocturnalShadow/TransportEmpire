@@ -1,39 +1,51 @@
 #include "request.h"
 
-Request::Request(const QString& _data, Role rol):
-	role(rol)
+#include <QDebug>
+
+Request::Request(const QString& message, Role _role)
+    : role{ _role }
 {
-	QByteArray ba = QByteArray::fromStdString(_data.toStdString());
-	QJsonDocument json = QJsonDocument::fromJson(ba);
-	parseJSON(json);
+    initialize(message.toUtf8());
 }
 
-Request::Request(const QByteArray& _data, Role rol):
-	role(rol)
+Request::Request(const QByteArray& message, Role _role)
+    : role{ _role }
 {
-	QJsonDocument json = QJsonDocument::fromBinaryData(_data);
-	parseJSON(json);
+    initialize(message);
 }
 
-Role Request::getRole() const {
-	return role;
-}
-
-QString Request::getCommand() const {
+const QString& Request::getCommand() const {
 	return command;
 }
 
-QJsonValue Request::getData() const {
+const QJsonObject& Request::getData() const {
 	return data;
 }
 
-void Request::setRole(Role rol) {
-	role = rol;
+Role Request::getRole() const {
+    return role;
 }
 
-void Request::parseJSON(const QJsonDocument &json) {
-	QJsonObject req = json.object();
-	command = req["request"].toString();
-	data = req["data"];
+bool Request::hasError() const {
+    return syntaxError;
+}
+
+
+void Request::setRole(Role _role) {
+    role = _role;
+}
+
+void Request::initialize(const QByteArray& message) {
+    QJsonDocument document = QJsonDocument::fromJson(message);
+    if(!document.isNull() && document.isObject())
+    {
+        QJsonObject request = document.object();
+        command = request["command"].toString();
+        data    = request["data"].toObject();
+    } else {
+        syntaxError = true;
+        qDebug() << "Request parsing syntax error.";
+    }
+
 }
 
