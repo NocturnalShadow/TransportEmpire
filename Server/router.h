@@ -1,6 +1,7 @@
 #pragma once
 
 #include "controller.h"
+#include "testcontroller.hpp"
 
 #include <vector>
 
@@ -9,24 +10,25 @@
 
 class Router : public QObject
 {
-    Q_OBJECT
+	Q_OBJECT
 private:
-    QVector<IController*> controls;
+	QVector<IController*> controls;
 
 public:
-    explicit Router(QObject *parent = 0);
+	explicit Router(QObject *parent = 0);
+	~Router();
 
 public:
-    void addController(IController* controller);
-    void addControllers(QVector<IController*> controls);
+	void addController(IController* controller);
+	void addControllers(QVector<IController*> controls);
 
-    static Router* createDefault();
+	static Router* createDefault();
 
 public slots:
-    void onRequestReceived(const Request& request);
+	void onRequestReceived(const Request& request);
 
 signals:
-    void requestReceived(const Request& request);
-    void replyReady(const Reply& reply);
+	void requestReceived(const Request& request);
+	void replyReady(const Reply& reply);
 };
 

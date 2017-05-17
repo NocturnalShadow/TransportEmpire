@@ -9,7 +9,6 @@
 using namespace std;
 
 #include "router.h"
-#include "testcontroller.hpp"
 
 class ServerClient: public QObject {
 	Q_OBJECT

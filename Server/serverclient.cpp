@@ -10,8 +10,7 @@ ServerClient::ServerClient(QWebSocket *soc, QObject *parent):
 	connect(socket, &QWebSocket::disconnected,
 			this,   &ServerClient::onClientDisconnected);
 
-	router = new Router(this);			// NOTE: adding controller
-	router->addController(new TestController);
+	router = Router::createDefault();
 
 	connect(this,   &ServerClient::requestReceived,
 			router, &Router::onRequestReceived);
@@ -19,10 +18,11 @@ ServerClient::ServerClient(QWebSocket *soc, QObject *parent):
 			this,   &ServerClient::onReplyReady);
 }
 
-ServerClient::~ServerClient(){
+ServerClient::~ServerClient() {
 	if (socket->state() != QAbstractSocket::UnconnectedState)
 		socket->abort();
 	delete socket;
+	delete router;
 }
 
 void ServerClient::onClientTextMessage(const QString &message) {
