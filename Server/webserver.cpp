@@ -10,15 +10,6 @@ WebServer::WebServer(QObject *parent):
 			this, &WebServer::onClientConnected);
 	connect(webServer, &QWebSocketServer::closed,
 			this, &WebServer::onClose);
-
-	modelBridge = new ModelBridge;
-}
-
-WebServer::~WebServer(){
-	while(!webClients.isEmpty()){
-		ServerClient *client = webClients.takeFirst();
-		delete client;
-	}
 }
 
 bool WebServer::open(quint16 port){
@@ -35,7 +26,7 @@ void WebServer::onClientConnected(){
 	qDebug() << "WebServer::onClientConnected()";
 	QWebSocket *ws = webServer->nextPendingConnection();
 
-	ServerClient *client = new ServerClient(ws, modelBridge);
+	ServerClient *client = new ServerClient(ws, this);
 	connect(client, &ServerClient::disconnected, this, &WebServer::onClientDisconnected);
 	webClients << client;
 }

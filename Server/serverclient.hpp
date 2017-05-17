@@ -3,33 +3,35 @@
 
 #include <QObject>
 #include <QtWebSockets/QWebSocket>
+#include <QDebug>
 
 #include <iostream>
 using namespace std;
 
-#include "modelbridge.hpp"
+#include "router.h"
+#include "testcontroller.hpp"
 
 class ServerClient: public QObject {
 	Q_OBJECT
 public:
-	explicit ServerClient(QWebSocket *soc, ModelBridge *bridge, QObject *parent = 0);
-	~ServerClient();
+	explicit ServerClient			(QWebSocket *soc, QObject *parent = 0);
+	~ServerClient					();
 
 private:		/// <Data/>
-	ModelBridge *modelBridge;
 	QWebSocket  *socket;
+	Router		*router;
+	Role		role = Role::CUSTOMER;
 
 private:		/// <Engine/>
-	void	processJSON				(const QJsonDocument &json);
-	void	processRequest			(const QString &request,  const QJsonValue &data);
-	void	sendResponse			(const QString &response, const QJsonValue &data = QJsonValue());
 
 private slots:
-	void	onClientTextMessage		(const QString &message);
-	void	onClientDataMessage		(QByteArray message);
+	void	onClientTextMessage		(const QString    &message);
+	void	onClientDataMessage		(const QByteArray &message);
+	void    onReplyReady            (const Reply      &reply);
 	void	onClientDisconnected	();
 
 signals:
+	void	requestReceived			(const Request &request);
 	void	disconnected			();
 };
 

@@ -9,18 +9,15 @@
 using namespace std;
 
 #include "serverclient.hpp"
-#include "modelbridge.hpp"
 
 class WebServer: public QObject {
 	Q_OBJECT
 public:
-	explicit WebServer(QObject *parent = 0);
-	~WebServer();
+	explicit WebServer				(QObject *parent = 0);
 
 private:		/// <Data/>
 	QWebSocketServer*		webServer;
 	QList <ServerClient*>	webClients;
-	ModelBridge*			modelBridge;
 
 public:			/// <Controls/>
 	bool	open					(quint16 port);
@@ -34,7 +31,7 @@ private slots:
 	void	onClose					();
 
 signals:
-	void	closed();
+	void	closed					();
 };
 
 #endif /* WEBSERVER_HPP */
