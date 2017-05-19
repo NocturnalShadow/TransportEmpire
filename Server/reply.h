@@ -1,23 +1,16 @@
 #pragma once
 
 #include "request.h"
+#include "specification.h"
 
 #include <QString>
 #include <QJsonObject>
 #include <QJsonDocument>
 
-enum class ResponseCode {
-	OK				= 200,
-	BadRequest		= 400,
-	Unauthorized	= 401,
-	Forbidden		= 403,
-	NotFound		= 404
-};
-
 class Reply
 {
 private:
-    QString         command;
+    Command         command;
     ResponseCode    code;
     Role            role;
 
@@ -28,7 +21,7 @@ public:
 
 public:
     QJsonObject&    getDataRef();
-    QString         getCommand()    const;
+    Command         getCommand()    const;
     Role            getRole()       const;
 
     void setCode(ResponseCode _code);

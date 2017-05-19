@@ -5,20 +5,14 @@ Router::Router(QObject* parent)
 {
 }
 
-Router::~Router()
-{
-    for (auto control : controls) {
-		delete control;
-    }
-}
 
 void Router::addController(IController* controller)
 {
-	controls.append(controller);
+    controls.emplace_back(controller);
 	connect(this, &Router::requestReceived,
-			controller, &IController::onRequestReceived);
+            controller, &IController::onRequestReceived, Qt::DirectConnection);
 	connect(controller, &IController::replyReady,
-			this, &Router::replyReady);
+            this, &Router::replyReady, Qt::DirectConnection);
 }
 
 void Router::addControllers(QVector<IController*> controls)
@@ -30,10 +24,4 @@ void Router::addControllers(QVector<IController*> controls)
 
 void Router::onRequestReceived(const Request& request) {
 	emit requestReceived(request);
-}
-
-Router* Router::createDefault() {
-    Router* router = new Router;
-	router->addController(new TestController);
-	return router;
 }

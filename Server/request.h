@@ -1,21 +1,16 @@
 #pragma once
 
+#include "specification.h"
+
 #include <QString>
 #include <QJsonObject>
 #include <QJsonDocument>
 
-enum class Role {
-	CUSTOMER,
-	DRIVER,
-	ADMIN
-};
-
 class Request
 {
 private:
-    QString         command;
+    Command         command;
     Role            role;
-
     QJsonObject     data;
 
     bool syntaxError = false;
@@ -25,15 +20,15 @@ public:
     Request(const QByteArray& message, Role _role = Role::CUSTOMER);
 
 public:
-    const QString& getCommand()     const;
+    Command getCommand()    const;
+    Role    getRole()       const;
+
     const QJsonObject& getData()    const;
 
-    Role getRole()                  const;
-    bool hasError()                 const;
-
     void setRole(Role _role);
+
+    bool hasError() const;
 
 private:
     void initialize(const QByteArray& message);
 };
-

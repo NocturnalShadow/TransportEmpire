@@ -1,4 +1,5 @@
 #include "serverclient.hpp"
+#include "routerfactory.h"
 
 ServerClient::ServerClient(QWebSocket *soc, QObject *parent):
 	QObject(parent), socket(soc)
@@ -10,12 +11,12 @@ ServerClient::ServerClient(QWebSocket *soc, QObject *parent):
 	connect(socket, &QWebSocket::disconnected,
 			this,   &ServerClient::onClientDisconnected);
 
-	router = Router::createDefault();
+    router = RouterFactory::create();
 
 	connect(this,   &ServerClient::requestReceived,
-			router, &Router::onRequestReceived);
+            router, &Router::onRequestReceived, Qt::QueuedConnection);
 	connect(router, &Router::replyReady,
-			this,   &ServerClient::onReplyReady);
+            this,   &ServerClient::onReplyReady, Qt::QueuedConnection);
 }
 
 ServerClient::~ServerClient() {
@@ -26,17 +27,17 @@ ServerClient::~ServerClient() {
 }
 
 void ServerClient::onClientTextMessage(const QString &message) {
-	Request req(message, role);
-	emit requestReceived(req);
+    Request req(message, role);         // WARNING: extra copy is here
+    emit requestReceived(req);          // due to the QueuedConnection
 }
 
 void ServerClient::onClientDataMessage(const QByteArray &message) {
-	Request req(message, role);
-	emit requestReceived(req);
+    Request req(message, role);         // WARNING: extra copy is here
+    emit requestReceived(req);          // due to the QueuedConnection
 }
 
 void ServerClient::onReplyReady(const Reply &reply) {
-	if (reply.getCommand() == "login")
+    if (reply.getCommand() == Command::LOGIN)
 		role = reply.getRole();
 	socket->sendTextMessage(reply.toString());
 }

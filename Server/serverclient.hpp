@@ -6,7 +6,6 @@
 #include <QDebug>
 
 #include <iostream>
-using namespace std;
 
 #include "router.h"
 

@@ -25,7 +25,10 @@ SOURCES += \
     Server/webserver.cpp \
     Server/reply.cpp \
     Server/request.cpp \
-    Server/router.cpp
+    Server/router.cpp \
+    Server/routerfactory.cpp \
+    Server/Controllers/RouteController.cpp \
+    Server/Controllers/UserController.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -56,5 +59,8 @@ HEADERS += \
     Server/reply.h \
     Server/request.h \
     Server/router.h \
-    Server/testcontroller.hpp
+    Server/routerfactory.h \
+    Server/Controllers/RouteController.h \
+    Server/Controllers/UserController.h \
+    specification.h
 

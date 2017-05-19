@@ -8,7 +8,7 @@
 class QTestSuite : public QObject
 {
     Q_OBJECT
-
+    Q_DISABLE_COPY(QTestSuite)
 protected:
     int argc;
     char** argv;

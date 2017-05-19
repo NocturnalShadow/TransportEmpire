@@ -17,7 +17,7 @@ void Reply::setRole(Role _role) {
     role = _role;
 }
 
-QString Reply::getCommand() const {
+Command Reply::getCommand() const {
 	return command;
 }
 
@@ -39,7 +39,7 @@ QByteArray Reply::toByteArray() const {
 
 QJsonDocument Reply::toJsonDocument() const {
     QJsonObject reply;
-    reply["command"]    = command;
+    reply["command"]    = static_cast<int>(command);
     reply["code"]       = static_cast<int>(code);
     reply["data"]       = data;
     return QJsonDocument{ reply };

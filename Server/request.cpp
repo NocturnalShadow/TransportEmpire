@@ -14,7 +14,11 @@ Request::Request(const QByteArray& message, Role _role)
     initialize(message);
 }
 
-const QString& Request::getCommand() const {
+Role Request::getRole() const {
+    return role;
+}
+
+Command Request::getCommand() const {
 	return command;
 }
 
@@ -22,17 +26,12 @@ const QJsonObject& Request::getData() const {
 	return data;
 }
 
-Role Request::getRole() const {
-    return role;
+void Request::setRole(Role _role) {
+    role = _role;
 }
 
 bool Request::hasError() const {
     return syntaxError;
-}
-
-
-void Request::setRole(Role _role) {
-    role = _role;
 }
 
 void Request::initialize(const QByteArray& message) {
@@ -40,8 +39,8 @@ void Request::initialize(const QByteArray& message) {
     if(!document.isNull() && document.isObject())
     {
         QJsonObject request = document.object();
-        command = request["command"].toString();
-        data    = request["data"].toObject();
+        command = (Command) request["command"].toInt();
+        data    =           request["data"].toObject();
     } else {
         syntaxError = true;
         qDebug() << "Request parsing syntax error.";
