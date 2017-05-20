@@ -12,15 +12,6 @@ TEMPLATE = app
 
 SOURCES += \
     main.cpp \
-    Model/Bus.cpp \
-    Model/BusTypeInfo.cpp \
-    Model/City.cpp \
-    Model/Path.cpp \
-    Model/Race.cpp \
-    Model/RaceStatistics.cpp \
-    Model/Route.cpp \
-    Model/RouteStatistics.cpp \
-    Model/ScheduledRace.cpp \
     Server/serverclient.cpp \
     Server/webserver.cpp \
     Server/reply.cpp \
@@ -28,7 +19,11 @@ SOURCES += \
     Server/router.cpp \
     Server/routerfactory.cpp \
     Server/Controllers/RouteController.cpp \
-    Server/Controllers/UserController.cpp
+    Server/Controllers/UserController.cpp \
+    Model/user.cpp \
+    Model/credentials.cpp \
+    Model/route.cpp \
+    Model/city.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -42,16 +37,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 HEADERS += \
-    Model/Bus.h \
-    Model/BusTypeInfo.h \
-    Model/City.h \
-    Model/Money.h \
-    Model/Path.h \
-    Model/Race.h \
-    Model/RaceStatistics.h \
-    Model/Route.h \
-    Model/RouteStatistics.h \
-    Model/ScheduledRace.h \
     Test/TestSuite.h \
     Server/serverclient.hpp \
     Server/webserver.hpp \
@@ -62,5 +47,11 @@ HEADERS += \
     Server/routerfactory.h \
     Server/Controllers/RouteController.h \
     Server/Controllers/UserController.h \
-    specification.h
+    specification.h \
+    Model/user.h \
+    Model/credentials.h \
+    Model/route.h \
+    Model/city.h \
+    Model/location.h \
+    utility.h
 

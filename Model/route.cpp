@@ -1,23 +1,34 @@
-#include "Model/Route.h"
+#include "route.h"
+#include "utility.h"
 
-Route::Route(QSharedPointer<Path> path_, QSharedPointer<RouteStatistics> statistics_, double milage_)
+RouteInfo::RouteInfo(const QJsonObject& route)
+    : origin{ City(route["origin"].toObject()) },
+      destination{ City(route["destination"].toObject()) },
+      totalDistance{ route["total_distance"].toDouble() }
 {
-    path = path_;
-    statistics = statistics_;
-    milage = milage_;
 }
 
-QSharedPointer<Path> Route::getPath()
+QJsonObject RouteInfo::toJsonObject() const
 {
-    return path;
+    QJsonObject info;
+    info["origin"] = origin.toJsonObject();
+    info["destination"] = destination.toJsonObject();
+    info["total_distance"] = totalDistance;
+    return info;
 }
 
-QSharedPointer<RouteStatistics> Route::getStatistics()
+Route::Route(const QJsonObject& route)
+    : info{ route["info"].toObject() },
+      polyline{ route["polyline"].toString() },
+      stops{ toVector<City>(route["stops"].toArray()) }
 {
-    return statistics;
 }
 
-double Route::getMilage()
-{
-    return milage;
+QJsonObject Route::toJsonObject() const {
+    QJsonObject route;
+    route["id"] = id;
+    route["info"] = info.toJsonObject();
+    route["polyline"] = polyline;
+    route["stops"] = toJsonArray(stops);
+    return route;
 }

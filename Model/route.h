@@ -1,25 +1,53 @@
 #pragma once
 
-#include "Model/Path.h"
-#include "Model/RouteStatistics.h"
+#include "city.h"
 
-#include <QSharedPointer>
+#include <QVector>
+#include <QString>
+#include <QJsonArray>
+#include <QJsonObject>
+
+#include <QDebug>
+
+class RouteInfo
+{
+private:
+    City origin;
+    City destination;
+    double totalDistance;
+
+public:
+    RouteInfo(const QJsonObject& route);
+
+public:
+    double getDistance() const { return totalDistance; }
+
+public:
+    QJsonObject toJsonObject() const;
+};
 
 class Route
 {
 private:
-    QSharedPointer<Path>                    path;
-    QSharedPointer<RouteStatistics>         statistics;
-
-    double                                  milage;         // whole distance which route takes
-
-public:
-    Route() = default;
-    Route(QSharedPointer<Path> path_, QSharedPointer<RouteStatistics> statistics_, double milage_);
+    int id;
+    RouteInfo info;
+    QString polyline;
+    QVector<City> stops;
 
 public:
-    QSharedPointer<Path> getPath();
-    QSharedPointer<RouteStatistics> getStatistics();
-    double getMilage();
+    Route(const QJsonObject& route);
+
+public:
+    QJsonObject toJsonObject() const;
+
+public:
+    void Debug() const
+    {
+        qDebug().nospace()
+                << "Route (id: "    << id
+                << ", distance: "   << info.getDistance()
+                << ", from: "       << stops.first().getAddress()
+                << ", to: "         << stops.last().getAddress()
+                <<")";
+    }
 };
-
