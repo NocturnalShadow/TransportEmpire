@@ -23,7 +23,9 @@ SOURCES += \
     Model/user.cpp \
     Model/credentials.cpp \
     Model/route.cpp \
-    Model/city.cpp
+    Model/city.cpp \
+    Database/database.cpp \
+    Database/entitymanager.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -53,5 +55,24 @@ HEADERS += \
     Model/route.h \
     Model/city.h \
     Model/location.h \
-    utility.h
+    utility.h \
+    Database/database.h \
+    Database/entity.h \
+    Database/entitymanager.h
+
+# Select the database we are going to use.
+#
+DEFINES += DATABASE_MSSQL
+
+# Set ODB headers paths
+#
+INCLUDEPATH += "./Libraries/ODB/libodb"
+INCLUDEPATH += "./Libraries/ODB/libodb-mssql"
+INCLUDEPATH += "./Libraries/ODB/libodb-qt"
+
+# Link to the ODB runtime libraries.
+#
+LIBS += -L"$$_PRO_FILE_PWD_/Libraries/ODB/libodb/lib64/"        -lodb
+LIBS += -L"$$_PRO_FILE_PWD_/Libraries/ODB/libodb-mssql/lib64/"  -lodb-mssql
+LIBS += -L"$$_PRO_FILE_PWD_/Libraries/ODB/libodb-qt/lib64/"     -lodb-qt
 

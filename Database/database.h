@@ -1,21 +1,30 @@
 #pragma once
 
 #include <odb/database.hxx>
-#include <odb/connection.hxx>
-#include <odb/mssql/database.hxx>
 
-#include <QString>
-#include <QSharedPointer>
+#include <string>
+#include <memory>
+
+#include "entitymanager.h"
+
+namespace db {
+
+using std::string;
 
 class Database
 {
 private:
-	QString name;
-	QSharedPointer<odb::database> db;
+    string name;
+    string instance;
+    std::unique_ptr<odb::database> db;
+    std::unique_ptr<EntityManager> manager;
 
 public:
-	Database(const QString& _name);
+    Database(const string& _name, const string& _instance = "");
+    ~Database();
 
 public:
-	void Create();
+    void Connect(const string& user = "", const string& password = "");
 };
+
+}   // namespace db

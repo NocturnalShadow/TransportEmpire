@@ -5,6 +5,8 @@
 
 #include "Server/webserver.hpp"
 
+#include "Database/database.h"
+
 int main(int argc, char* argv[])
 {
 	QCoreApplication app(argc, argv);
@@ -14,8 +16,11 @@ int main(int argc, char* argv[])
 	QTestSuite::RunAllTests(argc, argv);
 #endif
 
-	WebServer server;
-	server.open(8080);
+//	WebServer server;
+//	server.open(8080);
+
+    db::Database db{ "TransportEmpireDB" };
+    db.Connect();
 
 	return app.exec();
 }

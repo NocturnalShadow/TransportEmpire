@@ -22,6 +22,8 @@ public:
     int getId()     const { return id;   }
     Role getRole()  const { return role; }
 
+    const Credentials& getCredentials() const { return credentials; }
+
 public:
     void Debug() const
     {
