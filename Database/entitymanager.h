@@ -1,17 +1,18 @@
 #pragma once
 
-#include "entity.h"
-
 #include <odb/database.hxx>
 #include <odb/mssql/database.hxx>
 
-#include <map>
-
 #include <QObject>
+#include <QSharedPointer>
+
+#include "entity.h"
+#include "entity-odb.hxx"
 
 namespace db
 {
-using namespace odb;
+using odb::database;
+using odb::core::transaction;
 
 class EntityManager : public QObject
 {
@@ -24,7 +25,7 @@ public:
     virtual ~EntityManager() = default;
 
 public:
-    void reset();
+    void abort();
     void begin();
     void end();
 
@@ -33,19 +34,35 @@ private slots:
     void onEraseRequested();
 
 public:
-    void persist(IEntity* entity);
-    template<typename T, typename K>
-    T* load(K id)
+    template<class T>
+    void persist(IEntity& entity)
     {
-        T* result = nullptr;
-        _transactive([&] () { result = db->load<T>(id); });
+        transactive([&] () {
+            db->persist(entity);
+            attach(&entity);
+        });
+    }
+    template<class T>
+    void persist(QSharedPointer<IEntity> entity)
+    {
+        transactive([&] () {
+            db->persist(*entity);
+            attach(entity.get());
+        });
+    }
+    template<class T, typename K>
+    QSharedPointer<T> load(K id)
+    {
+        QSharedPointer<T> result = nullptr;
+        transactive([&] () {
+            result = db->load<T>(id);
+        });
         return result;
     }
 
-private:
-    void _persist(IEntity* entity);
+private:    
     template<typename Action>
-    void _transactive(Action action)
+    void transactive(Action action)
     {
         if(transaction::has_current()) {
             action();
@@ -55,6 +72,7 @@ private:
             transaction::current().commit();
         }
     }
+    void attach(IEntity* entity);
 };
 
 }   // namespace db

@@ -1,54 +1,51 @@
 #include "entitymanager.h"
 
-db::EntityManager::EntityManager(odb::database* _db)
+namespace db {
+
+EntityManager::EntityManager(database* _db)
     : db{ _db }
 {
 }
 
-// public
+// >=========================< Public >=========================<
 
-void db::EntityManager::reset()
+void EntityManager::abort()
 {
     if(transaction::has_current()) {
         transaction::reset_current();
     }
 }
 
-void db::EntityManager::begin()
+void EntityManager::begin()
 {
-    reset();
+    abort();
     transaction(db->begin());
 }
 
-void db::EntityManager::end() {
+void EntityManager::end() {
     if(transaction::has_current()) {
         transaction::current().commit();
     }
 }
 
-void db::EntityManager::persist(db::IEntity *entity)
-{
-    _transactive([&] () { _persist(entity); });
-}
+// >=========================< Slots >=========================<
 
-// slots
-
-void db::EntityManager::onUpdateRequested()
+void EntityManager::onUpdateRequested()
 {
     IEntity* entity = qobject_cast<IEntity*>(sender());
-    _transactive([&] () { db->update(entity); });
+    transactive([&] () { db->update(*entity); });
 }
 
-void db::EntityManager::onEraseRequested()
+void EntityManager::onEraseRequested()
 {
     IEntity* entity = qobject_cast<IEntity*>(sender());
-    _transactive([&] () { db->erase(entity); });
+    transactive([&] () { db->erase(*entity); });
 }
 
-// private
+// >=========================< Private >=========================<
 
-void db::EntityManager::_persist(db::IEntity *entity) {
-    db->persist(entity);
+void EntityManager::attach(IEntity* entity)
+{
     connect(entity, &IEntity::updateRequested,
             this, &EntityManager::onUpdateRequested,
             Qt::DirectConnection);
@@ -56,3 +53,5 @@ void db::EntityManager::_persist(db::IEntity *entity) {
             this, &EntityManager::onEraseRequested,
             Qt::DirectConnection);
 }
+
+} // namespace db

@@ -25,7 +25,8 @@ SOURCES += \
     Model/route.cpp \
     Model/city.cpp \
     Database/database.cpp \
-    Database/entitymanager.cpp
+    Database/entitymanager.cpp \
+    Database/entity-odb.cxx
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings

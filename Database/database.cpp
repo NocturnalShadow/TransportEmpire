@@ -20,8 +20,8 @@ Database::~Database()
 void Database::Connect(const string& user, const string& password)
 {
     try {
-        db      = std::make_unique<mssql::database>(user, password, name, mssql::protocol_auto, "", instance);
-        manager = std::make_unique<EntityManager>(db.get());
+        db      = make_unique<mssql::database>(user, password, name, mssql::protocol_auto, "", instance);
+        manager = make_unique<EntityManager>(db.get());
     } catch(std::exception& e) {
         qDebug() << e.what();
     }
