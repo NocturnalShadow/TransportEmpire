@@ -4,15 +4,15 @@
 
 namespace db {
 
-class IEntity : public QObject
+class Entity : public QObject
 {
     Q_OBJECT
 private:
     unsigned int id;
 
 public:
-    IEntity() = default;
-    virtual ~IEntity() = default;
+    Entity() = default;
+    virtual ~Entity() = default;
 
 public:
     void update()   { emit updateRequested(); }

@@ -28,7 +28,7 @@ void EntityManager::end() {
     }
 }
 
-void EntityManager::persist(IEntity& entity)
+void EntityManager::persist(Entity& entity)
 {
     transactive([&] () {
         db->persist(entity);
@@ -36,7 +36,7 @@ void EntityManager::persist(IEntity& entity)
     });
 }
 
-void EntityManager::persist(QSharedPointer<IEntity> entity)
+void EntityManager::persist(QSharedPointer<Entity> entity)
 {
     transactive([&] () {
         db->persist(*entity);
@@ -46,12 +46,12 @@ void EntityManager::persist(QSharedPointer<IEntity> entity)
 
 // >=========================< Private >=========================<
 
-void EntityManager::track(IEntity* entity)
+void EntityManager::track(Entity* entity)
 {
-    connect(entity, &IEntity::updateRequested,
+    connect(entity, &Entity::updateRequested,
             this, &EntityManager::onUpdateRequested,
             Qt::DirectConnection);
-    connect(entity, &IEntity::eraseRequested,
+    connect(entity, &Entity::eraseRequested,
             this, &EntityManager::onEraseRequested,
             Qt::DirectConnection);
 }
@@ -60,13 +60,13 @@ void EntityManager::track(IEntity* entity)
 
 void EntityManager::onUpdateRequested()
 {
-    IEntity* entity = qobject_cast<IEntity*>(sender());
+    Entity* entity = qobject_cast<Entity*>(sender());
     transactive([&] () { db->update(*entity); });
 }
 
 void EntityManager::onEraseRequested()
 {
-    IEntity* entity = qobject_cast<IEntity*>(sender());
+    Entity* entity = qobject_cast<Entity*>(sender());
     transactive([&] () { db->erase(*entity); });
 }
 

@@ -24,10 +24,10 @@
 
 namespace odb
 {
-  // IEntity
+  // Entity
   //
 
-  struct access::object_traits_impl< ::db::IEntity, id_mssql >::extra_statement_cache_type
+  struct access::object_traits_impl< ::db::Entity, id_mssql >::extra_statement_cache_type
   {
     extra_statement_cache_type (
       mssql::connection&,
@@ -39,8 +39,8 @@ namespace odb
     }
   };
 
-  access::object_traits_impl< ::db::IEntity, id_mssql >::id_type
-  access::object_traits_impl< ::db::IEntity, id_mssql >::
+  access::object_traits_impl< ::db::Entity, id_mssql >::id_type
+  access::object_traits_impl< ::db::Entity, id_mssql >::
   id (const id_image_type& i)
   {
     mssql::database* db (0);
@@ -59,8 +59,8 @@ namespace odb
     return id;
   }
 
-  access::object_traits_impl< ::db::IEntity, id_mssql >::discriminator_type
-  access::object_traits_impl< ::db::IEntity, id_mssql >::
+  access::object_traits_impl< ::db::Entity, id_mssql >::discriminator_type
+  access::object_traits_impl< ::db::Entity, id_mssql >::
   discriminator (const image_type& i)
   {
     mssql::database* db (0);
@@ -80,7 +80,7 @@ namespace odb
     return d;
   }
 
-  void access::object_traits_impl< ::db::IEntity, id_mssql >::
+  void access::object_traits_impl< ::db::Entity, id_mssql >::
   bind (mssql::bind* b,
         image_type& i,
         mssql::statement_kind sk)
@@ -113,7 +113,7 @@ namespace odb
     }
   }
 
-  void access::object_traits_impl< ::db::IEntity, id_mssql >::
+  void access::object_traits_impl< ::db::Entity, id_mssql >::
   bind (mssql::bind* b, id_image_type& i)
   {
     std::size_t n (0);
@@ -122,7 +122,7 @@ namespace odb
     b[n].size_ind = &i.id_size_ind;
   }
 
-  void access::object_traits_impl< ::db::IEntity, id_mssql >::
+  void access::object_traits_impl< ::db::Entity, id_mssql >::
   init (image_type& i,
         const object_type& o,
         mssql::statement_kind sk)
@@ -154,7 +154,7 @@ namespace odb
     }
   }
 
-  void access::object_traits_impl< ::db::IEntity, id_mssql >::
+  void access::object_traits_impl< ::db::Entity, id_mssql >::
   init (object_type& o,
         const image_type& i,
         database* db)
@@ -179,7 +179,7 @@ namespace odb
     }
   }
 
-  void access::object_traits_impl< ::db::IEntity, id_mssql >::
+  void access::object_traits_impl< ::db::Entity, id_mssql >::
   init (id_image_type& i, const id_type& id)
   {
     {
@@ -192,48 +192,48 @@ namespace odb
     }
   }
 
-  access::object_traits_impl< ::db::IEntity, id_mssql >::map_type*
-  access::object_traits_impl< ::db::IEntity, id_mssql >::map;
+  access::object_traits_impl< ::db::Entity, id_mssql >::map_type*
+  access::object_traits_impl< ::db::Entity, id_mssql >::map;
 
-  const access::object_traits_impl< ::db::IEntity, id_mssql >::info_type
-  access::object_traits_impl< ::db::IEntity, id_mssql >::info (
-    typeid (::db::IEntity),
+  const access::object_traits_impl< ::db::Entity, id_mssql >::info_type
+  access::object_traits_impl< ::db::Entity, id_mssql >::info (
+    typeid (::db::Entity),
     0,
     0,
-    "db::IEntity",
-    &odb::create_impl< ::db::IEntity >,
-    &odb::dispatch_impl< ::db::IEntity, id_mssql >,
+    "db::Entity",
+    &odb::create_impl< ::db::Entity >,
+    &odb::dispatch_impl< ::db::Entity, id_mssql >,
     0);
 
-  static const access::object_traits_impl< ::db::IEntity, id_mssql >::entry_type
-  polymorphic_entry_for_db_IEntity;
+  static const access::object_traits_impl< ::db::Entity, id_mssql >::entry_type
+  polymorphic_entry_for_db_Entity;
 
-  const char access::object_traits_impl< ::db::IEntity, id_mssql >::persist_statement[] =
-  "INSERT INTO [IEntity] "
+  const char access::object_traits_impl< ::db::Entity, id_mssql >::persist_statement[] =
+  "INSERT INTO [Entity] "
   "([typeid]) "
   "OUTPUT INSERTED.[id] "
   "VALUES "
   "(?)";
 
-  const char access::object_traits_impl< ::db::IEntity, id_mssql >::find_statement[] =
+  const char access::object_traits_impl< ::db::Entity, id_mssql >::find_statement[] =
   "SELECT "
-  "[IEntity].[id], "
-  "[IEntity].[typeid] "
-  "FROM [IEntity] "
-  "WHERE [IEntity].[id]=?";
+  "[Entity].[id], "
+  "[Entity].[typeid] "
+  "FROM [Entity] "
+  "WHERE [Entity].[id]=?";
 
-  const char access::object_traits_impl< ::db::IEntity, id_mssql >::
+  const char access::object_traits_impl< ::db::Entity, id_mssql >::
   find_discriminator_statement[] =
   "SELECT "
-  "[IEntity].[typeid] "
-  "FROM [IEntity] "
-  "WHERE [IEntity].[id]=?";
+  "[Entity].[typeid] "
+  "FROM [Entity] "
+  "WHERE [Entity].[id]=?";
 
-  const char access::object_traits_impl< ::db::IEntity, id_mssql >::erase_statement[] =
-  "DELETE FROM [IEntity] "
+  const char access::object_traits_impl< ::db::Entity, id_mssql >::erase_statement[] =
+  "DELETE FROM [Entity] "
   "WHERE [id]=?";
 
-  void access::object_traits_impl< ::db::IEntity, id_mssql >::
+  void access::object_traits_impl< ::db::Entity, id_mssql >::
   persist (database& db, object_type& obj, bool top, bool dyn)
   {
     ODB_POTENTIALLY_UNUSED (db);
@@ -313,7 +313,7 @@ namespace odb
                 callback_event::post_persist);
   }
 
-  void access::object_traits_impl< ::db::IEntity, id_mssql >::
+  void access::object_traits_impl< ::db::Entity, id_mssql >::
   update (database& db, const object_type& obj, bool top, bool dyn)
   {
     ODB_POTENTIALLY_UNUSED (db);
@@ -363,7 +363,7 @@ namespace odb
     }
   }
 
-  void access::object_traits_impl< ::db::IEntity, id_mssql >::
+  void access::object_traits_impl< ::db::Entity, id_mssql >::
   erase (database& db, const id_type& id, bool top, bool dyn)
   {
     using namespace mssql;
@@ -414,7 +414,7 @@ namespace odb
       pointer_cache_traits::erase (db, id);
   }
 
-  void access::object_traits_impl< ::db::IEntity, id_mssql >::
+  void access::object_traits_impl< ::db::Entity, id_mssql >::
   erase (database& db, const object_type& obj, bool top, bool dyn)
   {
     ODB_POTENTIALLY_UNUSED (db);
@@ -437,8 +437,8 @@ namespace odb
     callback (db, obj, callback_event::post_erase);
   }
 
-  access::object_traits_impl< ::db::IEntity, id_mssql >::pointer_type
-  access::object_traits_impl< ::db::IEntity, id_mssql >::
+  access::object_traits_impl< ::db::Entity, id_mssql >::pointer_type
+  access::object_traits_impl< ::db::Entity, id_mssql >::
   find (database& db, const id_type& id)
   {
     using namespace mssql;
@@ -513,7 +513,7 @@ namespace odb
     return p;
   }
 
-  bool access::object_traits_impl< ::db::IEntity, id_mssql >::
+  bool access::object_traits_impl< ::db::Entity, id_mssql >::
   find (database& db, const id_type& id, object_type& obj, bool dyn)
   {
     ODB_POTENTIALLY_UNUSED (dyn);
@@ -562,7 +562,7 @@ namespace odb
     return true;
   }
 
-  bool access::object_traits_impl< ::db::IEntity, id_mssql >::
+  bool access::object_traits_impl< ::db::Entity, id_mssql >::
   reload (database& db, object_type& obj, bool dyn)
   {
     ODB_POTENTIALLY_UNUSED (dyn);
@@ -609,7 +609,7 @@ namespace odb
     return true;
   }
 
-  bool access::object_traits_impl< ::db::IEntity, id_mssql >::
+  bool access::object_traits_impl< ::db::Entity, id_mssql >::
   find_ (statements_type& sts,
          const id_type* id)
   {
@@ -652,7 +652,7 @@ namespace odb
       return false;
   }
 
-  void access::object_traits_impl< ::db::IEntity, id_mssql >::
+  void access::object_traits_impl< ::db::Entity, id_mssql >::
   discriminator_ (statements_type& sts,
                   const id_type& id,
                   discriminator_type* pd)

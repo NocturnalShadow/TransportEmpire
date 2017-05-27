@@ -28,11 +28,11 @@ public:
     void begin();
     void end();
 
-    void persist(IEntity& entity);
-    void persist(Pointer<IEntity> entity);
+    void persist(Entity& entity);
+    void persist(Pointer<Entity> entity);
 
 private:
-    void track(IEntity* entity);
+    void track(Entity* entity);
 
 private slots:
     void onUpdateRequested();
@@ -44,6 +44,12 @@ public:
 
     template<class T>
     QVector<Pointer<T>> load(const query<T>& _query);
+
+    template<class T>
+    LazyPointer<T> loadLater(unsigned int id);
+
+    template<class T>
+    QVector<LazyPointer<T>> loadLater(const query<T>& _query);
 
     template<class T>
     void erase(const query<T>& _query);

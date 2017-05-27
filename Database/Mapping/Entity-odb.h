@@ -57,25 +57,25 @@
 
 namespace odb
 {
-  // IEntity
+  // Entity
   //
   template <>
-  struct class_traits< ::db::IEntity >
+  struct class_traits< ::db::Entity >
   {
     static const class_kind kind = class_object;
   };
 
   template <>
-  class access::object_traits< ::db::IEntity >
+  class access::object_traits< ::db::Entity >
   {
     public:
-    typedef ::db::IEntity object_type;
-    typedef ::QSharedPointer< ::db::IEntity > pointer_type;
+    typedef ::db::Entity object_type;
+    typedef ::QSharedPointer< ::db::Entity > pointer_type;
     typedef odb::pointer_traits<pointer_type> pointer_traits;
 
     static const bool polymorphic = true;
 
-    typedef ::db::IEntity root_type;
+    typedef ::db::Entity root_type;
     typedef ::std::string discriminator_type;
     typedef polymorphic_map<object_type> map_type;
     typedef polymorphic_concrete_info<object_type> info_type;
@@ -116,11 +116,11 @@ namespace odb
 
 namespace odb
 {
-  // IEntity
+  // Entity
   //
   template <>
-  class access::object_traits_impl< ::db::IEntity, id_mssql >:
-    public access::object_traits< ::db::IEntity >
+  class access::object_traits_impl< ::db::Entity, id_mssql >:
+    public access::object_traits< ::db::Entity >
   {
     public:
     static const std::size_t batch = 1UL;
@@ -262,8 +262,8 @@ namespace odb
   };
 
   template <>
-  class access::object_traits_impl< ::db::IEntity, id_common >:
-    public access::object_traits_impl< ::db::IEntity, id_mssql >
+  class access::object_traits_impl< ::db::Entity, id_common >:
+    public access::object_traits_impl< ::db::Entity, id_mssql >
   {
   };
 }

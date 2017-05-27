@@ -4,19 +4,19 @@
 
 namespace odb
 {
-  // IEntity
+  // Entity
   //
 
   inline
-  access::object_traits< ::db::IEntity >::id_type
-  access::object_traits< ::db::IEntity >::
+  access::object_traits< ::db::Entity >::id_type
+  access::object_traits< ::db::Entity >::
   id (const object_type& o)
   {
     return o.getId ();
   }
 
   inline
-  void access::object_traits< ::db::IEntity >::
+  void access::object_traits< ::db::Entity >::
   callback (database& db, object_type& x, callback_event e)
   {
     ODB_POTENTIALLY_UNUSED (db);
@@ -25,7 +25,7 @@ namespace odb
   }
 
   inline
-  void access::object_traits< ::db::IEntity >::
+  void access::object_traits< ::db::Entity >::
   callback (database& db, const object_type& x, callback_event e)
   {
     ODB_POTENTIALLY_UNUSED (db);
@@ -36,11 +36,11 @@ namespace odb
 
 namespace odb
 {
-  // IEntity
+  // Entity
   //
 
   inline
-  void access::object_traits_impl< ::db::IEntity, id_mssql >::
+  void access::object_traits_impl< ::db::Entity, id_mssql >::
   load_ (statements_type& sts,
          object_type& obj,
          bool)
