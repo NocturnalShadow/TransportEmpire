@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
 //	WebServer server;
 //	server.open(8080);
 
-    db::Database db{ "TransportEmpireDB" };
+    db::DatabaseConnection db{ "TransportEmpireDB" };
     db.Connect();
 
 	return app.exec();

@@ -8,16 +8,16 @@
 
 namespace db {
 
-Database::Database(const string& _name, const string& _instance)
+DatabaseConnection::DatabaseConnection(const string& _name, const string& _instance)
     : name{ _name }, instance{ _instance }
 {
 }
 
-Database::~Database()
+DatabaseConnection::~DatabaseConnection()
 {
 }
 
-void Database::Connect(const string& user, const string& password)
+void DatabaseConnection::Connect(const string& user, const string& password)
 {
     try {
         db      = make_unique<mssql::database>(user, password, name, mssql::protocol_auto, "", instance);

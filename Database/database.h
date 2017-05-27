@@ -12,7 +12,7 @@ namespace db {
 using namespace std;
 using namespace odb;
 
-class Database
+class DatabaseConnection
 {
 private:
     string name;
@@ -21,8 +21,8 @@ private:
     unique_ptr<EntityManager> manager;
 
 public:
-    Database(const string& _name, const string& _instance = "");
-    ~Database();
+    DatabaseConnection(const string& _name, const string& _instance = "");
+    ~DatabaseConnection();
 
 public:
     EntityManager* getEntityManager() { return manager.get(); }

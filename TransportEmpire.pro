@@ -59,7 +59,8 @@ HEADERS += \
     utility.h \
     Database/database.h \
     Database/entity.h \
-    Database/entitymanager.h
+    Database/entitymanager.h \
+    Database/entitymanager-inl.h
 
 # Select the database we are going to use.
 #

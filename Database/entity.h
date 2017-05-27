@@ -27,8 +27,6 @@ public:
     void setId(unsigned int _id) { id = _id; }
 };
 
-
-
 #ifdef ODB_COMPILER
 
 #pragma db object(IEntity) polymorphic
@@ -36,5 +34,8 @@ public:
 
 #endif
 
-
 } // namespace db
+
+#include "entity-odb.hxx"
+
+
