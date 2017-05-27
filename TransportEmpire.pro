@@ -43,7 +43,8 @@ HEADERS += \
     Server/Controllers/UserController.h     \
     Test/TestSuite.h                        \
     Specification.h                         \
-    Utility.h
+    Utility.h                               \
+    Pointer.h
 
 SOURCES += \
     Database/Database.cpp                   \
