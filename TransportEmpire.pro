@@ -10,24 +10,6 @@ CONFIG -= app_bundle
 
 TEMPLATE = app
 
-SOURCES += \
-    main.cpp \
-    Server/serverclient.cpp \
-    Server/webserver.cpp \
-    Server/reply.cpp \
-    Server/request.cpp \
-    Server/router.cpp \
-    Server/routerfactory.cpp \
-    Server/Controllers/RouteController.cpp \
-    Server/Controllers/UserController.cpp \
-    Model/user.cpp \
-    Model/credentials.cpp \
-    Model/route.cpp \
-    Model/city.cpp \
-    Database/database.cpp \
-    Database/entitymanager.cpp \
-    Database/entity-odb.cxx
-
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -40,27 +22,46 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 HEADERS += \
-    Test/TestSuite.h \
-    Server/serverclient.hpp \
-    Server/webserver.hpp \
-    Server/controller.h \
-    Server/reply.h \
-    Server/request.h \
-    Server/router.h \
-    Server/routerfactory.h \
-    Server/Controllers/RouteController.h \
-    Server/Controllers/UserController.h \
-    specification.h \
-    Model/user.h \
-    Model/credentials.h \
-    Model/route.h \
-    Model/city.h \
-    Model/location.h \
-    utility.h \
-    Database/database.h \
-    Database/entity.h \
-    Database/entitymanager.h \
-    Database/entitymanager-inl.h
+    Database/Database.h                     \
+    Database/Entity.h                       \
+    Database/Entity-map.h                   \
+    Database/EntityManager-inl.h            \
+    Database/EntityManager.h                \
+    Model/City.h                            \
+    Model/Credentials.h                     \
+    Model/Location.h                        \
+    Model/Route.h                           \
+    Model/User.h                            \
+    Server/Controller.h                     \
+    Server/Reply.h                          \
+    Server/Request.h                        \
+    Server/Router.h                         \
+    Server/RouterFactory.h                  \
+    Server/ClientConnection.h               \
+    Server/WebServer.h                      \
+    Server/Controllers/RouteController.h    \
+    Server/Controllers/UserController.h     \
+    Test/TestSuite.h                        \
+    Specification.h                         \
+    Utility.h
+
+SOURCES += \
+    Database/Database.cpp                   \
+    Database/EntityManager.cpp              \
+    Database/Entity-map.cpp                 \
+    Model/City.cpp                          \
+    Model/Credentials.cpp                   \
+    Model/Route.cpp                         \
+    Model/User.cpp                          \
+    Server/Reply.cpp                        \
+    Server/Request.cpp                      \
+    Server/Router.cpp                       \
+    Server/RouterFactory.cpp                \
+    Server/ClientConnection.cpp             \
+    Server/WebServer.cpp                    \
+    Server/Controllers/RouteController.cpp  \
+    Server/Controllers/UserController.cpp   \
+    main.cpp
 
 # Select the database we are going to use.
 #

@@ -1,7 +1,7 @@
 #include "Server/Controllers/UserController.h"
 
-#include "Model/user.h"
-#include "Model/credentials.h"
+#include "Model/User.h"
+#include "Model/Credentials.h"
 
 Reply UserController::login(const Request& request)
 {

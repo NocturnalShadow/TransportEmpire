@@ -3,9 +3,9 @@
 
 #include "Test/TestSuite.h"
 
-#include "Server/webserver.hpp"
+#include "Server/WebServer.h"
 
-#include "Database/database.h"
+#include "Database/Database.h"
 
 int main(int argc, char* argv[])
 {
