@@ -5,9 +5,10 @@
 
 #include <QObject>
 #include <QVector>
+#include <QScopedPointer>
 
-#include "Pointer.h"
-#include "Entity.h"
+#include "Database/Pointer.h"
+#include "Database/Entity.h"
 
 namespace db
 {
@@ -18,6 +19,7 @@ class EntityManager : public QObject
     Q_OBJECT
 private:
     database* db = nullptr;
+    QScopedPointer<session> se;
 
 public:
     EntityManager(database* _db);

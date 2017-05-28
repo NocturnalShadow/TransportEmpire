@@ -3,27 +3,34 @@
 #include "Specification.h"
 #include "Database/Entity.h"
 
-#include <QString>
-#include <QJsonArray>
-#include <QJsonObject>
+#include <QtCore/QDebug>
+#include <QtCore/QString>
+#include <QtCore/QJsonArray>
+#include <QtCore/QJsonObject>
 
-#include <QDebug>
 
 class User;
 class Credentials : public db::Entity
 {
     PERSISTENT
 private:
+    Role role;
     QString login;
     QString password;
-    Role role;
-    LazyWeakPointer<User> user;
 
 public:
+    Credentials() = default;
     Credentials(const QJsonObject& credentials);
 
 public:
-    const QString& getLogin() const { return login; }
+    QString getLogin()  const { return login;   }
+    Role getRole()      const { return role;    }
+
+    void setRole(Role _role) { role = _role; }
+
+    bool hasPassword(QString _password) const {
+        return password == _password;
+    }
 
 public:
     QJsonObject toJsonObject() const;
@@ -38,4 +45,6 @@ public:
                 << ")";
     }
 };
+
+#include "Credentials-map.h"
 

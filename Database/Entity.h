@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Mapping.h"
+#include "Database/Mapping.h"
 
 #include <QtCore/QObject>
 

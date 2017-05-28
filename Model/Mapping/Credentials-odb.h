@@ -2,8 +2,8 @@
 // compiler for C++.
 //
 
-#ifndef ENTITY_ODB_H
-#define ENTITY_ODB_H
+#ifndef CREDENTIALS_ODB_H
+#define CREDENTIALS_ODB_H
 
 // Begin prologue.
 //
@@ -37,7 +37,11 @@
 
 #include <odb/pre.hxx>
 
-#include "Entity.h"
+// #include "Credentials.h"
+#include "../Credentials.h"
+
+// #include "Database/Entity-odb.h"
+#include "Database/Mapping/Entity-odb.h"
 
 #include <memory>
 #include <cstddef>
@@ -58,34 +62,34 @@
 
 namespace odb
 {
-  // Entity
+  // Credentials
   //
   template <>
-  struct class_traits< ::db::Entity >
+  struct class_traits< ::Credentials >
   {
     static const class_kind kind = class_object;
   };
 
   template <>
-  class access::object_traits< ::db::Entity >
+  class access::object_traits< ::Credentials >
   {
     public:
-    typedef ::db::Entity object_type;
-    typedef ::QSharedPointer< ::db::Entity > pointer_type;
+    typedef ::Credentials object_type;
+    typedef ::QSharedPointer< ::Credentials > pointer_type;
     typedef odb::pointer_traits<pointer_type> pointer_traits;
 
     static const bool polymorphic = true;
 
     typedef ::db::Entity root_type;
-    typedef ::std::string discriminator_type;
-    typedef polymorphic_map<object_type> map_type;
-    typedef polymorphic_concrete_info<object_type> info_type;
+    typedef ::db::Entity base_type;
+    typedef object_traits<root_type>::discriminator_type discriminator_type;
+    typedef polymorphic_concrete_info<root_type> info_type;
 
-    static const std::size_t depth = 1UL;
+    static const std::size_t depth = 2UL;
 
-    typedef unsigned int id_type;
+    typedef object_traits< ::db::Entity >::id_type id_type;
 
-    static const bool auto_id = true;
+    static const bool auto_id = false;
 
     static const bool abstract = false;
 
@@ -94,13 +98,13 @@ namespace odb
 
     typedef
     odb::pointer_cache_traits<
-      pointer_type,
+      object_traits<root_type>::pointer_type,
       odb::session >
     pointer_cache_traits;
 
     typedef
     odb::reference_cache_traits<
-      object_type,
+      root_type,
       odb::session >
     reference_cache_traits;
 
@@ -121,72 +125,56 @@ namespace odb
 
 namespace odb
 {
-  // Entity
+  // Credentials
   //
   template <>
-  class access::object_traits_impl< ::db::Entity, id_mssql >:
-    public access::object_traits< ::db::Entity >
+  class access::object_traits_impl< ::Credentials, id_mssql >:
+    public access::object_traits< ::Credentials >
   {
     public:
-    static const std::size_t batch = 1UL;
-
-    static const bool rowversion = false;
-
     typedef polymorphic_entry<object_type, id_mssql> entry_type;
     typedef object_traits_impl<root_type, id_mssql> root_traits;
+    typedef object_traits_impl<base_type, id_mssql> base_traits;
 
-    struct discriminator_image_type
-    {
-      char discriminator_value[257];
-      SQLLEN discriminator_size_ind;
+    typedef root_traits::id_image_type id_image_type;
 
-      std::size_t version;
-    };
-
-    struct id_image_type
-    {
-      int id_value;
-      SQLLEN id_size_ind;
-
-      std::size_t version;
-    };
-
-    static map_type* map;
     static const info_type info;
 
     struct image_type
     {
+      base_traits::image_type* base;
+
       // id
       //
       int id_value;
       SQLLEN id_size_ind;
 
-      // typeid_
+      // role
       //
-      char typeid_value[257];
-      SQLLEN typeid_size_ind;
+      int role_value;
+      SQLLEN role_size_ind;
+
+      // login
+      //
+      char login_value[513];
+      SQLLEN login_size_ind;
+
+      // password
+      //
+      char password_value[513];
+      SQLLEN password_size_ind;
 
       std::size_t version;
-
-      mssql::change_callback*
-      change_callback ()
-      {
-        return 0;
-      }
     };
 
     struct extra_statement_cache_type;
 
     using object_traits<object_type>::id;
 
-    static id_type
-    id (const id_image_type&);
-
-    static discriminator_type
-    discriminator (const image_type&);
-
     static void
     bind (mssql::bind*,
+          const mssql::bind* id,
+          std::size_t id_size,
           image_type&,
           mssql::statement_kind);
 
@@ -201,23 +189,31 @@ namespace odb
     static void
     init (object_type&,
           const image_type&,
-          database*);
+          database*,
+          std::size_t = depth);
 
     static void
     init (id_image_type&, const id_type&);
 
+    static bool
+    check_version (const std::size_t*, const image_type&);
+
+    static void
+    update_version (std::size_t*, const image_type&, mssql::binding*);
+
     typedef
-    mssql::polymorphic_root_object_statements<object_type>
+    mssql::polymorphic_derived_object_statements<object_type>
     statements_type;
 
-    typedef statements_type root_statements_type;
+    typedef
+    mssql::polymorphic_root_object_statements<root_type>
+    root_statements_type;
 
-    static const std::size_t column_count = 2UL;
+    static const std::size_t column_count = 4UL;
     static const std::size_t id_column_count = 1UL;
     static const std::size_t inverse_column_count = 0UL;
-    static const std::size_t readonly_column_count = 1UL;
+    static const std::size_t readonly_column_count = 0UL;
     static const std::size_t managed_optimistic_column_count = 0UL;
-    static const std::size_t discriminator_column_count = 1UL;
 
     static const std::size_t separate_load_column_count = 0UL;
     static const std::size_t separate_update_column_count = 0UL;
@@ -225,8 +221,9 @@ namespace odb
     static const bool versioned = false;
 
     static const char persist_statement[];
-    static const char find_statement[];
-    static const char find_discriminator_statement[];
+    static const char* const find_statements[depth];
+    static const std::size_t find_column_counts[depth];
+    static const char update_statement[];
     static const char erase_statement[];
 
     static void
@@ -253,28 +250,28 @@ namespace odb
     public:
     static bool
     find_ (statements_type&,
-           const id_type*);
+           const id_type*,
+           std::size_t = depth);
 
     static void
     load_ (statements_type&,
            object_type&,
-           bool reload);
+           bool reload,
+           std::size_t = depth);
 
     static void
-    discriminator_ (statements_type&,
-                    const id_type&,
-                    discriminator_type*);
+    load_ (database&, root_type&, std::size_t);
   };
 
   template <>
-  class access::object_traits_impl< ::db::Entity, id_common >:
-    public access::object_traits_impl< ::db::Entity, id_mssql >
+  class access::object_traits_impl< ::Credentials, id_common >:
+    public access::object_traits_impl< ::Credentials, id_mssql >
   {
   };
 }
 
-#include "Entity-odb-inl.h"
+#include "Credentials-odb-inl.h"
 
 #include <odb/post.hxx>
 
-#endif // ENTITY_ODB_H
+#endif // CREDENTIALS_ODB_H

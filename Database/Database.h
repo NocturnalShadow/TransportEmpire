@@ -5,7 +5,7 @@
 
 #include <odb/database.hxx>
 
-#include "EntityManager.h"
+#include "Database/EntityManager.h"
 
 namespace db {
 
