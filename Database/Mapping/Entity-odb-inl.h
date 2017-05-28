@@ -12,7 +12,7 @@ namespace odb
   access::object_traits< ::db::Entity >::
   id (const object_type& o)
   {
-    return o.getId ();
+    return o.id;
   }
 
   inline

@@ -23,14 +23,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 HEADERS += \
     Database/Database.h                     \
+    Database/Pointer.h                      \
+    Database/Mapping.h                      \
     Database/Entity.h                       \
     Database/Entity-map.h                   \
     Database/EntityManager-inl.h            \
     Database/EntityManager.h                \
-    Model/City.h                            \
     Model/Credentials.h                     \
-    Model/Location.h                        \
-    Model/Route.h                           \
     Model/User.h                            \
     Server/Controller.h                     \
     Server/Reply.h                          \
@@ -43,8 +42,7 @@ HEADERS += \
     Server/Controllers/UserController.h     \
     Test/TestSuite.h                        \
     Specification.h                         \
-    Utility.h                               \
-    Pointer.h
+    Utility.h
 
 SOURCES += \
     Database/Database.cpp                   \

@@ -1,36 +1,22 @@
 #pragma once
 
-#include "Credentials.h"
 #include "Specification.h"
+#include "Database/Entity.h"
+#include "Model/Credentials.h"
 
+#include <QString>
 #include <QJsonArray>
 #include <QJsonObject>
 
-#include <QDebug>
-
-class User
+class User : public db::Entity
 {
+    PERSISTENT
 private:
-    int id;
-    Role role;
-    Credentials credentials;
+    QString firstName;
+    QString lastName;
+    LazyPointer<Credentials> credentials;
 
 public:
     User() = default;
 
-public:
-    int getId()     const { return id;   }
-    Role getRole()  const { return role; }
-
-    const Credentials& getCredentials() const { return credentials; }
-
-public:
-    void Debug() const
-    {
-        qDebug().nospace()
-                << "User (id: " << id
-                << ", role: "   << (int) role
-                << ", login: "  << credentials.getLogin()
-                << ")";
-    }
 };

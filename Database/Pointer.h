@@ -1,7 +1,7 @@
 #pragma once
 
-#include <QWeakPointer>
-#include <QSharedPointer>
+#include <QtCore/QWeakPointer>
+#include <QtCore/QSharedPointer>
 
 #include <odb/qt/lazy-ptr.hxx>
 

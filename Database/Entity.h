@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Mapping.h"
+
 #include <QtCore/QObject>
 
 namespace db {
@@ -7,6 +9,7 @@ namespace db {
 class Entity : public QObject
 {
     Q_OBJECT
+    PERSISTENT
 private:
     unsigned int id;
 
@@ -24,7 +27,6 @@ signals:
 
 public:
     unsigned int getId() const { return id; }
-    void setId(unsigned int _id) { id = _id; }
 };
 
 } // namespace db

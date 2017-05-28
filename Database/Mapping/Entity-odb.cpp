@@ -166,7 +166,8 @@ namespace odb
     // id
     //
     {
-      unsigned int v;
+      unsigned int& v =
+        o.id;
 
       mssql::value_traits<
           unsigned int,
@@ -174,8 +175,6 @@ namespace odb
         v,
         i.id_value,
         i.id_size_ind == SQL_NULL_DATA);
-
-      o.setId (v);
     }
   }
 
@@ -291,12 +290,12 @@ namespace odb
     if (!st.execute ())
       throw object_already_persistent ();
 
-    obj.setId (id (sts.id_image ()));
+    obj.id = id (sts.id_image ());
 
     if (!top)
     {
       id_image_type& i (sts.id_image ());
-      init (i, obj.getId ());
+      init (i, obj.id);
 
       binding& idb (sts.id_image_binding ());
       if (i.version != sts.id_image_version () || idb.version == 0)
@@ -345,7 +344,7 @@ namespace odb
     if (!top)
     {
       id_image_type& i (sts.id_image ());
-      init (i, obj.getId ());
+      init (i, obj.id);
 
       binding& idb (sts.id_image_binding ());
       if (i.version != sts.id_image_version () || idb.version == 0)
@@ -588,7 +587,7 @@ namespace odb
     statements_type::auto_lock l (sts);
 
     const id_type& id  (
-      obj.getId ());
+      obj.id);
 
     if (!find_ (sts, &id))
       return false;
