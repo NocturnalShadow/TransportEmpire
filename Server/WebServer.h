@@ -5,9 +5,7 @@
 #include <QtWebSockets/QWebSocketServer>
 #include <QtWebSockets/QWebSocket>
 
-#include <iostream>
-
-#include "ClientConnection.h"
+#include "Server/ClientConnection.h"
 
 class WebServer: public QObject {
 	Q_OBJECT
@@ -21,8 +19,6 @@ private:		/// <Data/>
 public:			/// <Controls/>
 	bool	open					(quint16 port);
 	void	close					();
-
-private:		/// <Engine/>
 
 private slots:
 	void	onClientConnected		();

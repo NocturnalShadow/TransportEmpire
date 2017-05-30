@@ -1,22 +1,25 @@
-#include "ClientConnection.h"
-#include "RouterFactory.h"
+#include "Server/ClientConnection.h"
+#include "Server/Request.h"
+#include "Server/Reply.h"
+#include "Server/Router.h"
+#include "Server/RouterWizard.h"
 
-ClientConnection::ClientConnection(QWebSocket *soc, QObject *parent):
-	QObject(parent), socket(soc)
+ClientConnection::ClientConnection(QWebSocket *_socket, QObject *parent):
+    QObject(parent), socket{ _socket }, router{ new Router }
 {
 	connect(socket, &QWebSocket::textMessageReceived,
 			this,   &ClientConnection::onClientTextMessage);
 	connect(socket, &QWebSocket::binaryMessageReceived,
 			this,   &ClientConnection::onClientDataMessage);
 	connect(socket, &QWebSocket::disconnected,
-			this,   &ClientConnection::onClientDisconnected);
-
-    router = RouterFactory::create();
+            this,   &ClientConnection::onClientDisconnected);
 
 	connect(this,   &ClientConnection::requestReceived,
             router, &Router::onRequestReceived, Qt::QueuedConnection);
 	connect(router, &Router::replyReady,
             this,   &ClientConnection::onReplyReady, Qt::QueuedConnection);
+
+    RouterWizard::setUpControllers(router);
 }
 
 ClientConnection::~ClientConnection() {

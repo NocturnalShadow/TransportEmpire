@@ -35,7 +35,6 @@ HEADERS += \
     Server/Reply.h                          \
     Server/Request.h                        \
     Server/Router.h                         \
-    Server/RouterFactory.h                  \
     Server/ClientConnection.h               \
     Server/WebServer.h                      \
     Server/Controllers/RouteController.h    \
@@ -44,7 +43,8 @@ HEADERS += \
     Specification.h                         \
     Utility.h \
     Model/Credentials-map.h \
-    Model/User-map.h
+    Model/User-map.h \
+    Server/RouterWizard.h
 
 SOURCES += \
     Database/Database.cpp                   \
@@ -57,7 +57,6 @@ SOURCES += \
     Server/Reply.cpp                        \
     Server/Request.cpp                      \
     Server/Router.cpp                       \
-    Server/RouterFactory.cpp                \
     Server/ClientConnection.cpp             \
     Server/WebServer.cpp                    \
     Server/Controllers/RouteController.cpp  \

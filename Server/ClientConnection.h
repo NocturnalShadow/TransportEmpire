@@ -5,22 +5,22 @@
 #include <QtWebSockets/QWebSocket>
 #include <QDebug>
 
-#include <iostream>
+#include "Specification.h"
 
-#include "Router.h"
-
-class ClientConnection : public QObject {
+class Request;
+class Reply;
+class Router;
+class ClientConnection : public QObject{
 	Q_OBJECT
 public:
-    explicit ClientConnection		(QWebSocket *soc, QObject *parent = 0);
+    explicit ClientConnection		(QWebSocket *_socket, QObject *parent = 0);
     ~ClientConnection				();
 
 private:		/// <Data/>
-	QWebSocket  *socket;
-	Router		*router;
-	Role		role = Role::CUSTOMER;
+    QWebSocket* socket;
+    Router* router;
 
-private:		/// <Engine/>
+    Role role = Role::CUSTOMER;
 
 private slots:
 	void	onClientTextMessage		(const QString    &message);
