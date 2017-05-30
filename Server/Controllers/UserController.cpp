@@ -3,6 +3,11 @@
 #include "Model/User.h"
 #include "Model/Credentials.h"
 
+UserController::UserController(db::EntityManager* manager)
+    : IController{ manager }
+{
+}
+
 Reply UserController::login(const Request& request)
 {
     Credentials provided{ request.getData() };

@@ -1,11 +1,12 @@
 #pragma once
 
 #include "Server/Controller.h"
+#include "Database/EntityManager.h"
 
 class RouteController : public IController
 {
 public:
-    RouteController() = default;
+    RouteController(db::EntityManager* manager);
 
 private:
     Reply addRoute(const Request& request);

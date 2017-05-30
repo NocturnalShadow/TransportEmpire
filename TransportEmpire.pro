@@ -30,21 +30,21 @@ HEADERS += \
     Database/EntityManager-inl.h            \
     Database/EntityManager.h                \
     Model/Credentials.h                     \
+    Model/Credentials-map.h                 \
     Model/User.h                            \
-    Server/Controller.h                     \
-    Server/Reply.h                          \
-    Server/Request.h                        \
-    Server/Router.h                         \
-    Server/ClientConnection.h               \
+    Model/User-map.h                        \
     Server/WebServer.h                      \
+    Server/ClientConnection.h               \
+    Server/Request.h                        \
+    Server/Reply.h                          \
+    Server/Router.h                         \
+    Server/RouterWizard.h                   \
+    Server/Controller.h                     \
     Server/Controllers/RouteController.h    \
     Server/Controllers/UserController.h     \
     Test/TestSuite.h                        \
     Specification.h                         \
-    Utility.h \
-    Model/Credentials-map.h \
-    Model/User-map.h \
-    Server/RouterWizard.h
+    Utility.h
 
 SOURCES += \
     Database/Database.cpp                   \

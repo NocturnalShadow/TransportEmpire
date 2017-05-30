@@ -1,5 +1,10 @@
 #include "Server/Controllers/RouteController.h"
 
+RouteController::RouteController(db::EntityManager* manager)
+    : IController{ manager }
+{
+}
+
 Reply RouteController::addRoute(const Request& request)
 {
     return Reply(request);
