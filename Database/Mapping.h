@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Pointer.h"
+#include "Database/Pointer.h"
 
 #include <odb/core.hxx>
 

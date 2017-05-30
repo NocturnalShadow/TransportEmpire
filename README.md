@@ -18,10 +18,14 @@ Currently 3 suffixes are used:
 	- -inl for inline headers
 	- -map for mapping headers
 	- -odb for odb-generated files
+- For all includes a full path from the root of the project must be specified 
+
+> **Example:** #include "Database/Mapping/Entity-odb.h"
+- Only "/" symbol must be used when specifying a path. (No "\") 
 - When compiling persistent classes use the following odb compiler options:
-**-d mssql --profile qt --hxx-suffix .h --ixx-suffix -inl.h --cxx-suffix .cpp --output-dir Mapping**
+**--std c++14 --profile qt -d mssql --generate-session --generate-schema --hxx-suffix .h --ixx-suffix -inl.h --cxx-suffix .cpp -I ../ --output-dir Mapping**
 	
-> **Example:** odb -d mssql --profile qt --hxx-suffix .h --ixx-suffix -inl.h --cxx-suffix .cpp --output-dir Mapping Entity.h
+> **Example:** odb --std c++14 --profile qt -d mssql --generate-session --generate-schema --hxx-suffix .h --ixx-suffix -inl.h --cxx-suffix .cpp -I ../ --output-dir Mapping User.h Credentials.h
 	
 > **Note 1:** all directories with persistent classes must contain a "Mapping" directory where all odb-generated files will be stored.
 	

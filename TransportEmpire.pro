@@ -42,7 +42,9 @@ HEADERS += \
     Server/Controllers/UserController.h     \
     Test/TestSuite.h                        \
     Specification.h                         \
-    Utility.h
+    Utility.h \
+    Model/Credentials-map.h \
+    Model/User-map.h
 
 SOURCES += \
     Database/Database.cpp                   \

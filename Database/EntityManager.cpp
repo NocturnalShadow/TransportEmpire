@@ -1,9 +1,11 @@
 #include "EntityManager.h"
 
+#include <odb/session.hxx>
+
 namespace db {
 
 EntityManager::EntityManager(database* _db)
-    : db{ _db }
+    : db{ _db }, se{ new session }
 {
 }
 

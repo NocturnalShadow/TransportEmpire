@@ -4,9 +4,8 @@
 #include "Database/Entity.h"
 #include "Model/Credentials.h"
 
-#include <QString>
-#include <QJsonArray>
-#include <QJsonObject>
+#include <QtCore/QDebug>
+#include <QtCore/QString>
 
 class User : public db::Entity
 {
@@ -18,5 +17,25 @@ private:
 
 public:
     User() = default;
+    User(QString _firstName, QString _lastName, Pointer<Credentials> _credentials)
+        : firstName{ _firstName }, lastName{ _lastName }, credentials{ _credentials }
+    {
+    }
+
+public:
+    QString getFirstName()  const { return firstName;   }
+    QString getLastName()   const { return lastName;    }
+    auto getCredentials()   const { return credentials; }
+
+public:
+    void Debug() const
+    {
+        qDebug().nospace()
+                << "User: (firstName: " << firstName
+                << ", lastName:"        << lastName
+                << ")";
+    }
 
 };
+
+#include "User-map.h"
