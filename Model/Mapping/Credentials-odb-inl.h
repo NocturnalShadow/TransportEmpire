@@ -41,16 +41,16 @@ namespace odb
 
   inline
   void access::object_traits_impl< ::Credentials, id_mssql >::
-  bind (mssql::bind* b, id_image_type& i)
+  bind (mssql::bind* b, id_image_type& i, bool bv)
   {
-    object_traits_impl< ::db::Entity, id_mssql >::bind (b, i);
+    object_traits_impl< ::db::Entity, id_mssql >::bind (b, i, bv);
   }
 
   inline
   void access::object_traits_impl< ::Credentials, id_mssql >::
-  init (id_image_type& i, const id_type& id)
+  init (id_image_type& i, const id_type& id, const version_type* v)
   {
-    object_traits_impl< ::db::Entity, id_mssql >::init (i, id);
+    object_traits_impl< ::db::Entity, id_mssql >::init (i, id, v);
   }
 
   inline

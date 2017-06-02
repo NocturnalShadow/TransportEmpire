@@ -8,6 +8,7 @@ GO
 
 CREATE TABLE [Entity] (
   [id] INT NOT NULL PRIMARY KEY IDENTITY,
-  [typeid] VARCHAR(256) NOT NULL);
+  [typeid] VARCHAR(256) NOT NULL,
+  [version] INT NOT NULL);
 GO
 

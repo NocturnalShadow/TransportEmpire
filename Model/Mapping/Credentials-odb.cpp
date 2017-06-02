@@ -254,7 +254,8 @@ namespace odb
     "[Credentials].[login], "
     "[Credentials].[password], "
     "[Entity].[id], "
-    "[Entity].[typeid] "
+    "[Entity].[typeid], "
+    "[Entity].[version] "
     "FROM [Credentials] "
     "LEFT JOIN [Entity] ON [Entity].[id]=[Credentials].[id] "
     "WHERE [Credentials].[id]=?",
@@ -269,7 +270,7 @@ namespace odb
 
   const std::size_t access::object_traits_impl< ::Credentials, id_mssql >::find_column_counts[] =
   {
-    5UL,
+    6UL,
     3UL
   };
 
@@ -441,6 +442,7 @@ namespace odb
         bind (idb.bind, i);
         sts.id_image_version (i.version);
         idb.version++;
+        sts.optimistic_id_image_binding ().version++;
       }
     }
 
@@ -471,9 +473,59 @@ namespace odb
       }
     }
 
-    callback (db, obj, callback_event::pre_erase);
-    erase (db, id (obj), true, false);
-    callback (db, obj, callback_event::post_erase);
+    using namespace mssql;
+
+    mssql::connection& conn (
+      mssql::transaction::current ().connection ());
+    statements_type& sts (
+      conn.statement_cache ().find_object<object_type> ());
+
+    root_statements_type& rsts (sts.root_statements ());
+    ODB_POTENTIALLY_UNUSED (rsts);
+
+    if (top)
+      callback (db, obj, callback_event::pre_erase);
+
+    const id_type& id  (
+      obj.id);
+
+    if (top)
+    {
+      const version_type& v (
+        obj.version);
+      id_image_type& i (rsts.id_image ());
+      init (i, id, &v);
+
+      binding& idb (rsts.id_image_binding ());
+      if (i.version != rsts.id_image_version () ||
+          idb.version == 0)
+      {
+        bind (idb.bind, i);
+        rsts.id_image_version (i.version);
+        idb.version++;
+        rsts.optimistic_id_image_binding ().version++;
+      }
+    }
+
+    if (top)
+    {
+      version_type v;
+      root_traits::discriminator_ (rsts, id, 0, &v);
+
+      if (v != obj.version)
+        throw object_changed ();
+    }
+
+    if (sts.erase_statement ().execute () != 1)
+      throw object_changed ();
+
+    base_traits::erase (db, obj, false, false);
+
+    if (top)
+    {
+      pointer_cache_traits::erase (db, id);
+      callback (db, obj, callback_event::post_erase);
+    }
   }
 
   access::object_traits_impl< ::Credentials, id_mssql >::pointer_type
@@ -643,6 +695,9 @@ namespace odb
 
     auto_result ar (st);
 
+    if (root_traits::version (rsts.image ()) == obj.version)
+      return true;
+
     callback (db, obj, callback_event::pre_load);
     init (obj, sts.image (), &db);
     st.stream_result ();
@@ -672,6 +727,7 @@ namespace odb
         bind (idb.bind, i);
         sts.id_image_version (i.version);
         idb.version++;
+        sts.optimistic_id_image_binding ().version++;
       }
     }
 

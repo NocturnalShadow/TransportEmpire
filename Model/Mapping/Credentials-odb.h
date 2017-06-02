@@ -37,10 +37,8 @@
 
 #include <odb/pre.hxx>
 
-// #include "Credentials.h"
-#include "../Credentials.h"
+#include "Model/Credentials.h"
 
-// #include "Database/Entity-odb.h"
 #include "Database/Mapping/Entity-odb.h"
 
 #include <memory>
@@ -88,6 +86,7 @@ namespace odb
     static const std::size_t depth = 2UL;
 
     typedef object_traits< ::db::Entity >::id_type id_type;
+    typedef object_traits< ::db::Entity >::version_type version_type;
 
     static const bool auto_id = false;
 
@@ -179,7 +178,7 @@ namespace odb
           mssql::statement_kind);
 
     static void
-    bind (mssql::bind*, id_image_type&);
+    bind (mssql::bind*, id_image_type&, bool bind_version = true);
 
     static void
     init (image_type&,
@@ -193,7 +192,7 @@ namespace odb
           std::size_t = depth);
 
     static void
-    init (id_image_type&, const id_type&);
+    init (id_image_type&, const id_type&, const version_type* = 0);
 
     static bool
     check_version (const std::size_t*, const image_type&);

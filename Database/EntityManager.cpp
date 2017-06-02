@@ -5,26 +5,31 @@
 namespace db {
 
 EntityManager::EntityManager(database* _db)
-    : db{ _db }, se{ new session }
+    : db{ _db }, se{ false }
 {
 }
 
 // >=========================< Public >=========================<
 
-void EntityManager::abort()
+void EntityManager::startSession()
+{
+    session::current(se);
+}
+
+void EntityManager::abortTransaction()
 {
     if(transaction::has_current()) {
         transaction::reset_current();
     }
 }
 
-void EntityManager::begin()
+void EntityManager::beginTransaction()
 {
-    abort();
+    abortTransaction();
     transaction(db->begin());
 }
 
-void EntityManager::end() {
+void EntityManager::endTransaction() {
     if(transaction::has_current()) {
         transaction::current().commit();
     }
@@ -41,7 +46,7 @@ void EntityManager::persist(Entity& entity)
 void EntityManager::persist(QSharedPointer<Entity> entity)
 {
     transactive([&] () {
-        db->persist(*entity);
+        db->persist(entity);
         track(entity.data());
     });
 }
@@ -64,6 +69,12 @@ void EntityManager::onUpdateRequested()
 {
     Entity* entity = qobject_cast<Entity*>(sender());
     transactive([&] () { db->update(*entity); });
+}
+
+void EntityManager::onReloadRequested()
+{
+    Entity* entity = qobject_cast<Entity*>(sender());
+    transactive([&] () { db->reload(*entity); });
 }
 
 void EntityManager::onEraseRequested()

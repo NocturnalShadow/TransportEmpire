@@ -59,6 +59,23 @@ namespace odb
     return id;
   }
 
+  access::object_traits_impl< ::db::Entity, id_mssql >::version_type
+  access::object_traits_impl< ::db::Entity, id_mssql >::
+  version (const image_type& i)
+  {
+    version_type v;
+    {
+      mssql::value_traits<
+          unsigned int,
+          mssql::id_int >::set_value (
+        v,
+        i.version_value,
+        i.version_size_ind == SQL_NULL_DATA);
+    }
+
+    return v;
+  }
+
   access::object_traits_impl< ::db::Entity, id_mssql >::discriminator_type
   access::object_traits_impl< ::db::Entity, id_mssql >::
   discriminator (const image_type& i)
@@ -111,15 +128,33 @@ namespace odb
       b[n].capacity = static_cast<SQLLEN> (sizeof (i.typeid_value));
       n++;
     }
+
+    // version
+    //
+    if (sk == statement_select)
+    {
+      b[n].type = mssql::bind::int_;
+      b[n].buffer = &i.version_value;
+      b[n].size_ind = &i.version_size_ind;
+      n++;
+    }
   }
 
   void access::object_traits_impl< ::db::Entity, id_mssql >::
-  bind (mssql::bind* b, id_image_type& i)
+  bind (mssql::bind* b, id_image_type& i, bool bv)
   {
     std::size_t n (0);
     b[n].type = mssql::bind::int_;
     b[n].buffer = &i.id_value;
     b[n].size_ind = &i.id_size_ind;
+    if (bv)
+    {
+      n += 1;
+
+      b[n].type = mssql::bind::int_;
+      b[n].buffer = &i.version_value;
+      b[n].size_ind = &i.version_size_ind;
+    }
   }
 
   void access::object_traits_impl< ::db::Entity, id_mssql >::
@@ -176,10 +211,24 @@ namespace odb
         i.id_value,
         i.id_size_ind == SQL_NULL_DATA);
     }
+
+    // version
+    //
+    {
+      unsigned int& v =
+        o.version;
+
+      mssql::value_traits<
+          unsigned int,
+          mssql::id_int >::set_value (
+        v,
+        i.version_value,
+        i.version_size_ind == SQL_NULL_DATA);
+    }
   }
 
   void access::object_traits_impl< ::db::Entity, id_mssql >::
-  init (id_image_type& i, const id_type& id)
+  init (id_image_type& i, const id_type& id, const version_type* v)
   {
     {
       bool is_null (false);
@@ -188,6 +237,16 @@ namespace odb
           mssql::id_int >::set_image (
         i.id_value, is_null, id);
       i.id_size_ind = is_null ? SQL_NULL_DATA : 0;
+    }
+
+    if (v != 0)
+    {
+      bool is_null (false);
+      mssql::value_traits<
+          unsigned int,
+          mssql::id_int >::set_image (
+        i.version_value, is_null, (*v));
+      i.version_size_ind = is_null ? SQL_NULL_DATA : 0;
     }
   }
 
@@ -209,28 +268,41 @@ namespace odb
 
   const char access::object_traits_impl< ::db::Entity, id_mssql >::persist_statement[] =
   "INSERT INTO [Entity] "
-  "([typeid]) "
+  "([typeid], "
+  "[version]) "
   "OUTPUT INSERTED.[id] "
   "VALUES "
-  "(?)";
+  "(?, 1)";
 
   const char access::object_traits_impl< ::db::Entity, id_mssql >::find_statement[] =
   "SELECT "
   "[Entity].[id], "
-  "[Entity].[typeid] "
+  "[Entity].[typeid], "
+  "[Entity].[version] "
   "FROM [Entity] "
   "WHERE [Entity].[id]=?";
 
   const char access::object_traits_impl< ::db::Entity, id_mssql >::
   find_discriminator_statement[] =
   "SELECT "
-  "[Entity].[typeid] "
+  "[Entity].[typeid], "
+  "[Entity].[version] "
   "FROM [Entity] "
   "WHERE [Entity].[id]=?";
+
+  const char access::object_traits_impl< ::db::Entity, id_mssql >::update_statement[] =
+  "UPDATE [Entity] "
+  "SET "
+  "[version]=[version]+1 "
+  "WHERE [id]=? AND [version]=?";
 
   const char access::object_traits_impl< ::db::Entity, id_mssql >::erase_statement[] =
   "DELETE FROM [Entity] "
   "WHERE [id]=?";
+
+  const char access::object_traits_impl< ::db::Entity, id_mssql >::optimistic_erase_statement[] =
+  "DELETE FROM [Entity] "
+  "WHERE [id]=? AND [version]=?";
 
   void access::object_traits_impl< ::db::Entity, id_mssql >::
   persist (database& db, object_type& obj, bool top, bool dyn)
@@ -283,6 +355,7 @@ namespace odb
         bind (b.bind, i);
         sts.id_image_version (i.version);
         b.version++;
+        sts.optimistic_id_image_binding ().version++;
       }
     }
 
@@ -291,6 +364,8 @@ namespace odb
       throw object_already_persistent ();
 
     obj.id = id (sts.id_image ());
+
+    obj.version = 1;
 
     if (!top)
     {
@@ -303,6 +378,7 @@ namespace odb
         bind (idb.bind, i);
         sts.id_image_version (i.version);
         idb.version++;
+        sts.optimistic_id_image_binding ().version++;
       }
     }
 
@@ -341,19 +417,51 @@ namespace odb
     statements_type& sts (
       conn.statement_cache ().find_object<object_type> ());
 
-    if (!top)
-    {
-      id_image_type& i (sts.id_image ());
-      init (i, obj.id);
+    const id_type& id (
+      obj.id);
+    const version_type& v (
+      obj.version);
+    id_image_type& idi (sts.id_image ());
+    init (idi, id, &v);
 
-      binding& idb (sts.id_image_binding ());
-      if (i.version != sts.id_image_version () || idb.version == 0)
-      {
-        bind (idb.bind, i);
-        sts.id_image_version (i.version);
-        idb.version++;
-      }
+    image_type& im (sts.image ());
+    init (im, obj, statement_update);
+
+    bool u (false);
+    binding& imb (sts.update_image_binding ());
+    if (im.version != sts.update_image_version () ||
+        imb.version == 0)
+    {
+      bind (imb.bind, im, statement_update);
+      sts.update_image_version (im.version);
+      imb.version++;
+      u = true;
     }
+
+    binding& idb (sts.id_image_binding ());
+    if (idi.version != sts.update_id_image_version () ||
+        idb.version == 0)
+    {
+      if (idi.version != sts.id_image_version () ||
+          idb.version == 0)
+      {
+        bind (idb.bind, idi);
+        sts.id_image_version (idi.version);
+        idb.version++;
+        sts.optimistic_id_image_binding ().version++;
+      }
+
+      sts.update_id_image_version (idi.version);
+
+      if (!u)
+        imb.version++;
+    }
+
+    update_statement& st (sts.update_statement ());
+    if (st.execute () == 0)
+      throw object_changed ();
+
+    const_cast< object_type& > (obj).version++;
 
     if (top)
     {
@@ -403,6 +511,7 @@ namespace odb
         bind (idb.bind, i);
         sts.id_image_version (i.version);
         idb.version++;
+        sts.optimistic_id_image_binding ().version++;
       }
     }
 
@@ -431,9 +540,45 @@ namespace odb
       }
     }
 
-    callback (db, obj, callback_event::pre_erase);
-    erase (db, id (obj), true, false);
-    callback (db, obj, callback_event::post_erase);
+    using namespace mssql;
+
+    mssql::connection& conn (
+      mssql::transaction::current ().connection ());
+    statements_type& sts (
+      conn.statement_cache ().find_object<object_type> ());
+
+    if (top)
+      callback (db, obj, callback_event::pre_erase);
+
+    const id_type& id  (
+      obj.id);
+
+    if (top)
+    {
+      const version_type& v (
+        obj.version);
+      id_image_type& i (sts.id_image ());
+      init (i, id, &v);
+
+      binding& idb (sts.id_image_binding ());
+      if (i.version != sts.id_image_version () ||
+          idb.version == 0)
+      {
+        bind (idb.bind, i);
+        sts.id_image_version (i.version);
+        idb.version++;
+        sts.optimistic_id_image_binding ().version++;
+      }
+    }
+
+    if (sts.optimistic_erase_statement ().execute () != 1)
+      throw object_changed ();
+
+    if (top)
+    {
+      pointer_cache_traits::erase (db, id);
+      callback (db, obj, callback_event::post_erase);
+    }
   }
 
   access::object_traits_impl< ::db::Entity, id_mssql >::pointer_type
@@ -597,6 +742,9 @@ namespace odb
 
     auto_result ar (st);
 
+    if (version (sts.image ()) == obj.version)
+      return true;
+
     callback (db, obj, callback_event::pre_load);
     init (obj, sts.image (), &db);
     st.stream_result ();
@@ -623,6 +771,7 @@ namespace odb
       bind (idb.bind, i);
       sts.id_image_version (i.version);
       idb.version++;
+      sts.optimistic_id_image_binding ().version++;
     }
 
     image_type& im (sts.image ());
@@ -654,7 +803,8 @@ namespace odb
   void access::object_traits_impl< ::db::Entity, id_mssql >::
   discriminator_ (statements_type& sts,
                   const id_type& id,
-                  discriminator_type* pd)
+                  discriminator_type* pd,
+                  version_type* pv)
   {
     using namespace mssql;
 
@@ -665,7 +815,7 @@ namespace odb
     if (idi.version != sts.discriminator_id_image_version () ||
         idb.version == 0)
     {
-      bind (idb.bind, idi);
+      bind (idb.bind, idi, false);
       sts.discriminator_id_image_version (idi.version);
       idb.version++;
     }
@@ -685,6 +835,13 @@ namespace odb
         b[n].capacity = static_cast<SQLLEN> (sizeof (i.discriminator_value));
       }
 
+      n++;
+      {
+        b[n].type = mssql::bind::int_;
+        b[n].buffer = &i.version_value;
+        b[n].size_ind = &i.version_size_ind;
+      }
+
       sts.discriminator_image_version (i.version);
       imb.version++;
     }
@@ -697,7 +854,10 @@ namespace odb
 
       if (r == select_statement::no_data)
       {
-        throw object_not_persistent ();
+        if (pv != 0)
+          throw object_changed ();
+        else
+          throw object_not_persistent ();
       }
     }
 
@@ -712,6 +872,19 @@ namespace odb
           i.discriminator_value,
           static_cast<std::size_t> (i.discriminator_size_ind),
           i.discriminator_size_ind == SQL_NULL_DATA);
+      }
+    }
+
+    if (pv != 0)
+    {
+      version_type& v (*pv);
+      {
+        mssql::value_traits<
+            unsigned int,
+            mssql::id_int >::set_value (
+          v,
+          i.version_value,
+          i.version_size_ind == SQL_NULL_DATA);
       }
     }
   }

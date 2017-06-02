@@ -19,16 +19,18 @@ class EntityManager : public QObject
     Q_OBJECT
 private:
     database* db = nullptr;
-    QScopedPointer<session> se;
+    session se;
 
 public:
     EntityManager(database* _db);
     virtual ~EntityManager() = default;
 
 public:
-    void abort();
-    void begin();
-    void end();
+    void startSession();
+
+    void abortTransaction();
+    void beginTransaction();
+    void endTransaction();
 
     void persist(Entity& entity);
     void persist(Pointer<Entity> entity);
@@ -38,6 +40,7 @@ private:
 
 private slots:
     void onUpdateRequested();
+    void onReloadRequested();
     void onEraseRequested();
 
 public:

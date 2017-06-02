@@ -84,6 +84,7 @@ namespace odb
     static const std::size_t depth = 1UL;
 
     typedef unsigned int id_type;
+    typedef unsigned int version_type;
 
     static const bool auto_id = true;
 
@@ -140,6 +141,9 @@ namespace odb
       char discriminator_value[257];
       SQLLEN discriminator_size_ind;
 
+      int version_value;
+      SQLLEN version_size_ind;
+
       std::size_t version;
     };
 
@@ -147,6 +151,9 @@ namespace odb
     {
       int id_value;
       SQLLEN id_size_ind;
+
+      int version_value;
+      SQLLEN version_size_ind;
 
       std::size_t version;
     };
@@ -166,6 +173,11 @@ namespace odb
       char typeid_value[257];
       SQLLEN typeid_size_ind;
 
+      // version
+      //
+      int version_value;
+      SQLLEN version_size_ind;
+
       std::size_t version;
 
       mssql::change_callback*
@@ -182,6 +194,9 @@ namespace odb
     static id_type
     id (const id_image_type&);
 
+    static version_type
+    version (const image_type&);
+
     static discriminator_type
     discriminator (const image_type&);
 
@@ -191,7 +206,7 @@ namespace odb
           mssql::statement_kind);
 
     static void
-    bind (mssql::bind*, id_image_type&);
+    bind (mssql::bind*, id_image_type&, bool bind_version = true);
 
     static void
     init (image_type&,
@@ -204,7 +219,7 @@ namespace odb
           database*);
 
     static void
-    init (id_image_type&, const id_type&);
+    init (id_image_type&, const id_type&, const version_type* = 0);
 
     typedef
     mssql::polymorphic_root_object_statements<object_type>
@@ -212,11 +227,11 @@ namespace odb
 
     typedef statements_type root_statements_type;
 
-    static const std::size_t column_count = 2UL;
+    static const std::size_t column_count = 3UL;
     static const std::size_t id_column_count = 1UL;
     static const std::size_t inverse_column_count = 0UL;
     static const std::size_t readonly_column_count = 1UL;
-    static const std::size_t managed_optimistic_column_count = 0UL;
+    static const std::size_t managed_optimistic_column_count = 1UL;
     static const std::size_t discriminator_column_count = 1UL;
 
     static const std::size_t separate_load_column_count = 0UL;
@@ -227,7 +242,9 @@ namespace odb
     static const char persist_statement[];
     static const char find_statement[];
     static const char find_discriminator_statement[];
+    static const char update_statement[];
     static const char erase_statement[];
+    static const char optimistic_erase_statement[];
 
     static void
     persist (database&, object_type&, bool top = true, bool dyn = true);
@@ -263,7 +280,8 @@ namespace odb
     static void
     discriminator_ (statements_type&,
                     const id_type&,
-                    discriminator_type*);
+                    discriminator_type*,
+                    version_type* = 0);
   };
 
   template <>

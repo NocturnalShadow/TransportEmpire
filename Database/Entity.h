@@ -12,6 +12,7 @@ class Entity : public QObject
     PERSISTENT
 private:
     unsigned int id;
+    unsigned int version;
 
 public:
     Entity() = default;
