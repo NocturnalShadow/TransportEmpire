@@ -8,21 +8,21 @@
 
 namespace db {
 
-DatabaseConnection::DatabaseConnection(const string& _name, const string& _instance)
+Database::Database(const string& _name, const string& _instance)
     : name{ _name }, instance{ _instance }
 {
 }
 
-DatabaseConnection::~DatabaseConnection()
+Database::~Database()
 {
 }
 
-EntityManager* DatabaseConnection::manager()
+EntityManager* Database::createManagerInstance()
 {
     return new EntityManager{ db.get() };
 }
 
-void DatabaseConnection::Connect(const string& user, const string& password)
+void Database::Connect(const string& user, const string& password)
 {
     try {
         db = make_unique<mssql::database>(user,

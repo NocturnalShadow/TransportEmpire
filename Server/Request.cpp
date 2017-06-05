@@ -18,8 +18,8 @@ Role Request::getRole() const {
     return role;
 }
 
-Command Request::getCommand() const {
-	return command;
+Request::Type Request::getType() const {
+    return type;
 }
 
 const QJsonObject& Request::getData() const {
@@ -39,8 +39,8 @@ void Request::initialize(const QByteArray& message) {
     if(!document.isNull() && document.isObject())
     {
         QJsonObject request = document.object();
-        command = (Command) request["command"].toInt();
-        data    =           request["data"].toObject();
+        type = (Type) request["command"].toInt();
+        data = request["data"].toObject();
     } else {
         syntaxError = true;
         qDebug() << "Request parsing syntax error.";

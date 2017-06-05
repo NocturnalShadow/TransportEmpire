@@ -1,19 +1,19 @@
 #pragma once
 
 #include "Server/Controller.h"
-#include "Database/EntityManager.h"
 
+class db::Database;
+class db::EntityManager;
 class RouteController : public IController
 {
 public:
-    RouteController(db::EntityManager* manager);
+    RouteController(db::Database* database);
 
 private:
-    Reply addRoute(const Request& request);
-    Reply getRoute(const Request& request);
-    Reply getRouteList(const Request& request);
+    static Response addRoute(const Request& request, db::EntityManager* manager);
+    static Response getRoute(const Request& request, db::EntityManager* manager);
+    static Response getRouteList(const Request& request, db::EntityManager* manager);
 
-public slots:
-    void onRequestReceived(const Request& request);
-
+protected:
+    RequestHandler requestHandler(Request::Type requestType) override;
 };

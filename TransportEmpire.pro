@@ -1,4 +1,4 @@
-QT += core websockets testlib
+QT += core websockets concurrent testlib
 QT -= gui
 
 CONFIG += c++11
@@ -33,10 +33,9 @@ HEADERS += \
     Model/Credentials-map.h                 \
     Model/User.h                            \
     Model/User-map.h                        \
-    Server/WebServer.h                      \
     Server/ClientConnection.h               \
+    Server/ConnectionManager.h              \
     Server/Request.h                        \
-    Server/Reply.h                          \
     Server/Router.h                         \
     Server/RouterWizard.h                   \
     Server/Controller.h                     \
@@ -44,7 +43,9 @@ HEADERS += \
     Server/Controllers/UserController.h     \
     Test/TestSuite.h                        \
     Specification.h                         \
-    Utility.h
+    Utility.h \
+    Server/Response.h \
+    Server/Task.h
 
 SOURCES += \
     Database/Database.cpp                   \
@@ -54,11 +55,11 @@ SOURCES += \
     Model/Credentials.cpp                   \
     Model/Route.cpp                         \
     Model/User.cpp                          \
-    Server/Reply.cpp                        \
-    Server/Request.cpp                      \
-    Server/Router.cpp                       \
+    Server/ConnectionManager.cpp            \
     Server/ClientConnection.cpp             \
-    Server/WebServer.cpp                    \
+    Server/Request.cpp                      \
+    Server/Reply.cpp                        \
+    Server/Router.cpp                       \
     Server/Controllers/RouteController.cpp  \
     Server/Controllers/UserController.cpp   \
     main.cpp

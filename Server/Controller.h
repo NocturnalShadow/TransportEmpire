@@ -1,28 +1,44 @@
 #pragma once
 
-#include "Server/Reply.h"
-#include "Server/Request.h"
+#include "Database/Database.h"
 #include "Database/EntityManager.h"
 
+#include "Server/ClientConnection.h"
+#include "Server/Response.h"
+#include "Server/Request.h"
+#include "Server/Task.h"
+
 #include <QObject>
+#include <QThreadPool>
 
 class IController : public QObject
 {
 	Q_OBJECT
-    Q_DISABLE_COPY(IController)
+protected:
+    using RequestHandler = Response (*) (const Request&, db::EntityManager* manager);
+
 private:
-    db::EntityManager* manger;
+    QThreadPool* pool = QThreadPool::globalInstance();
+    db::Database* database;
 
 public:
-    IController(db::EntityManager* _manager)
-        : manger{ _manager }
+    IController(db::Database* _database)
+        : database{ _database }
     {
     }
     virtual ~IController() = default;
 
-public slots:
-	virtual void onRequestReceived(const Request& request) = 0;
+protected:
+    virtual RequestHandler requestHandler(Request::Type requestType) = 0;
 
-signals:
-	void replyReady(const Reply& reply);
+public slots:
+    void onRequestReceived(const Request& request, ClientConnection* sender)
+    {
+        RequestHandler handler = requestHandler(request.getType());
+        Task* task = new Task{ request, handler, database->createManagerInstance() };
+        connect(task, &Task::responseReady,
+                sender, &ClientConnection::onResponseReady,
+                Qt::QueuedConnection);
+        pool->start(task);
+    }
 };

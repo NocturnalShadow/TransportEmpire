@@ -11,7 +11,7 @@ using namespace std;
 using namespace odb;
 
 class EntityManager;
-class DatabaseConnection
+class Database
 {
 private:
     string name;
@@ -19,11 +19,11 @@ private:
     unique_ptr<database> db;
 
 public:
-    DatabaseConnection(const string& _name, const string& _instance = "");
-    ~DatabaseConnection();
+    Database(const string& _name, const string& _instance = "");
+    ~Database();
 
 public:
-    EntityManager* manager();
+    EntityManager* createManagerInstance();
 
 public:
     void Connect(const string& user = "", const string& password = "");

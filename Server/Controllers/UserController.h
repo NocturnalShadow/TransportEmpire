@@ -1,16 +1,17 @@
 #pragma once
 
 #include "Server/Controller.h"
-#include "Database/EntityManager.h"
 
+class db::Database;
+class db::EntityManager;
 class UserController : public IController
 {
 public:
-    UserController(db::EntityManager* manager);
+    UserController(db::Database* database);
 
-public:
-    Reply login(const Request& request);
+private:
+    static Response login(const Request& request, db::EntityManager* manager);
 
-public slots:
-    void onRequestReceived(const Request& request);
+protected:
+    RequestHandler requestHandler(Request::Type requestType) override;
 };

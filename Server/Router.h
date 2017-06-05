@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Controller.h"
+#include "Server/Controller.h"
+#include "Server/ClientConnection.h"
 
 #include <vector>
 #include <memory>
@@ -18,15 +19,14 @@ public:
     explicit Router(QObject* parent = nullptr);
 
 public:
-	void addController(IController* controller);
-	void addControllers(QVector<IController*> controls);
+    void addController(IController* controller);
+    void addControllers(QVector<IController*> controls);
 
 public slots:
-	void onRequestReceived(const Request& request);
+    void onRequestReceived(const Request& request);
 
 signals:
-	void requestReceived(const Request& request);
-	void replyReady(const Reply& reply);
+    void requestReceived(const Request& request, ClientConnection* sender);
 };
 
 

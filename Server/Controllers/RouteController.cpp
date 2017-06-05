@@ -1,37 +1,37 @@
 #include "Server/Controllers/RouteController.h"
 
-RouteController::RouteController(db::EntityManager* manager)
-    : IController{ manager }
+#include "Database/EntityManager.h"
+
+RouteController::RouteController(db::Database* database)
+    : IController{ database }
 {
 }
 
-Reply RouteController::addRoute(const Request& request)
+Response RouteController::addRoute(const Request& request, db::EntityManager* manager)
 {
-    return Reply(request);
+    return Response(request);
 }
 
-Reply RouteController::getRoute(const Request& request)
+Response RouteController::getRoute(const Request& request, db::EntityManager* manager)
 {
-    return Reply(request);
+    return Response(request);
 }
 
-Reply RouteController::getRouteList(const Request& request)
+Response RouteController::getRouteList(const Request& request, db::EntityManager* manager)
 {
-    return Reply(request);
+    return Response(request);
 }
 
-void RouteController::onRequestReceived(const Request& request)
+IController::RequestHandler RouteController::requestHandler(Request::Type requestType)
 {
-    switch(request.getCommand())
+    switch(requestType)
     {
-    case Command::ADD_ROUTE:
-        emit replyReady(addRoute(request));
-        break;
-    case Command::GET_ROUTE:
-        emit replyReady(getRoute(request));
-        break;
-    case Command::GET_ROUTE_LIST:
-        emit replyReady(getRouteList(request));
-        break;
+    case Request::ADD_ROUTE:
+        return addRoute;
+    case Request::GET_ROUTE:
+        return getRoute;
+    case Request::GET_ROUTE_LIST:
+        return getRouteList;
     }
 }
+

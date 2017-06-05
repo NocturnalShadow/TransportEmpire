@@ -1,45 +1,38 @@
-#include "Reply.h"
+#include "Response.h"
 
-Reply::Reply(const Request& request)
-    : command   { request.getCommand()  },
-      role      { request.getRole()     },
-      code      { request.hasError() ?
-                      ResponseCode::BadRequest :
-                      ResponseCode::OK  }
+Response::Response(const Request& request)
+    : role{ request.getRole()     },
+      code{ request.hasError() ?
+                Code::BadRequest : Code::OK  }
 {
 }
 
-void Reply::setCode(ResponseCode _code) {
+void Response::setCode(Code _code) {
     code = _code;
 }
 
-void Reply::setRole(Role _role) {
+void Response::setRole(Role _role) {
     role = _role;
 }
 
-Command Reply::getCommand() const {
-	return command;
-}
-
-Role Reply::getRole() const {
+Role Response::getRole() const {
     return role;
 }
 
-QJsonObject& Reply::getDataRef() {
+QJsonObject& Response::getDataRef() {
 	return data;
 }
 
-QString Reply::toString() const {
+QString Response::toString() const {
     return toJsonDocument().toJson(QJsonDocument::Compact);
 }
 
-QByteArray Reply::toByteArray() const {
+QByteArray Response::toByteArray() const {
     return toJsonDocument().toBinaryData();
 }
 
-QJsonDocument Reply::toJsonDocument() const {
+QJsonDocument Response::toJsonDocument() const {
     QJsonObject reply;
-    reply["command"]    = static_cast<int>(command);
     reply["code"]       = static_cast<int>(code);
     reply["data"]       = data;
     return QJsonDocument{ reply };

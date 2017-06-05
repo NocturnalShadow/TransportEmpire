@@ -8,8 +8,11 @@
 
 class Request
 {
+public:
+    enum Type;
+
 private:
-    Command         command;
+    Type            type;
     Role            role;
     QJsonObject     data;
 
@@ -20,10 +23,10 @@ public:
     Request(const QByteArray& message, Role _role = Role::CUSTOMER);
 
 public:
-    Command getCommand()    const;
-    Role    getRole()       const;
+    Type getType() const;
+    Role getRole() const;
 
-    const QJsonObject& getData()    const;
+    const QJsonObject& getData() const;
 
     void setRole(Role _role);
 
@@ -31,4 +34,11 @@ public:
 
 private:
     void initialize(const QByteArray& message);
+};
+
+enum Request::Type {
+    LOGIN,
+    ADD_ROUTE,
+    GET_ROUTE,
+    GET_ROUTE_LIST
 };

@@ -3,7 +3,7 @@
 
 #include "Test/TestSuite.h"
 
-#include "Server/WebServer.h"
+#include "Server/ConnectionManager.h"
 
 #include "Database/Database.h"
 
@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
 //	WebServer server;
 //	server.open(8080);
 
-    db::DatabaseConnection db{ "TransportEmpireDB" };
+    db::Database db{ "TransportEmpireDB" };
     db.Connect();
 
 	return app.exec();

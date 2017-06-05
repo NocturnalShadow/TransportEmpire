@@ -1,26 +1,27 @@
 #include "Server/Controllers/UserController.h"
 
+#include "Database/EntityManager.h"
+
 #include "Model/User.h"
 #include "Model/Credentials.h"
 
-UserController::UserController(db::EntityManager* manager)
-    : IController{ manager }
+UserController::UserController(db::Database* database)
+    : IController{ database }
 {
 }
 
-Reply UserController::login(const Request& request)
+Response UserController::login(const Request& request, db::EntityManager* manager)
 {
     Credentials provided{ request.getData() };
 
-    return Reply(request);
+    return Response(request);
 }
 
-void UserController::onRequestReceived(const Request& request)
+IController::RequestHandler UserController::requestHandler(Request::Type requestType)
 {
-    switch(request.getCommand())
+    switch(requestType)
     {
-    case Command::LOGIN:
-        emit replyReady(login(request));
-        break;
+    case Request::LOGIN:
+        return login;
     }
 }

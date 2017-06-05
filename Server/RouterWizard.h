@@ -6,14 +6,12 @@
 #include "Server/Controllers/RouteController.h"
 #include "Server/Controllers/UserController.h"
 
-#include "Database/EntityManager.h"
-
 class RouterWizard
 {
 public:
-    static void setUpControllers(Router* router, db::EntityManager* manager = nullptr)
+    static void setUpControllers(Router* router)
     {
-        router->addController(new UserController{ manager });
-        router->addController(new RouteController{ manager });
+        router->addController(new UserController);
+        router->addController(new RouteController);
     }
 };

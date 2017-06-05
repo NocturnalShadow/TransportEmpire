@@ -10,18 +10,17 @@ void Router::addController(IController* controller)
 {
     controls.emplace_back(controller);
 	connect(this, &Router::requestReceived,
-            controller, &IController::onRequestReceived, Qt::DirectConnection);
-	connect(controller, &IController::replyReady,
-            this, &Router::replyReady, Qt::DirectConnection);
+            controller, &IController::onRequestReceived);
 }
 
-void Router::addControllers(QVector<IController*> controls)
+void Router::addControllers(QVector<IController*> _controls)
 {
-	for(auto controller : controls) {
+    for(auto controller : _controls) {
 		addController(controller);
 	}
 }
 
 void Router::onRequestReceived(const Request& request) {
-	emit requestReceived(request);
+    ClientConnection* requestSender = qobject_cast<ClientConnection*>(sender());
+    emit requestReceived(request, requestSender);
 }
