@@ -2,6 +2,8 @@
 
 #include "Server/Controller.h"
 
+namespace srv {
+
 class db::Database;
 class db::EntityManager;
 class RouteController : public IController
@@ -17,3 +19,5 @@ private:
 protected:
     RequestHandler requestHandler(Request::Type requestType) override;
 };
+
+} // srv namespace

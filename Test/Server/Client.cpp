@@ -1,4 +1,4 @@
-#include "Test/Client.h"
+#include "Test/Server/Client.h"
 
 #include <QDebug>
 
@@ -10,11 +10,11 @@ Client::Client(const QUrl& url, QObject* parent)
     qDebug() << "Test client started.";
 
     connect(&socket, &QWebSocket::connected,
-            this, &TestClient::onConnected);
+            this, &Client::onConnected);
     connect(&socket, &QWebSocket::disconnected,
-            this, &TestClient::onDisconnected);
+            this, &Client::onDisconnected);
     connect(&socket, &QWebSocket::textMessageReceived,
-            this, &TestClient::onTextMessageReceived);
+            this, &Client::onTextMessageReceived);
 
     qDebug() << "Connectiong by url: " << url;
 

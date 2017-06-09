@@ -1,42 +1,44 @@
 #include "Server/ConnectionManager.h"
 #include "Server/ClientConnection.h"
 
-ConnectionManager::ConnectionManager(QObject* parent)
-    : QObject(parent)
-{
-    server = new QWebSocketServer("TransportEmpireServer",
-					QWebSocketServer::NonSecureMode, this);
+namespace srv {
 
-    connect(server, &QWebSocketServer::newConnection,
-            this,   &ConnectionManager::onClientConnected);
-    connect(server, &QWebSocketServer::closed,
-            this,   &ConnectionManager::closed);
+ConnectionManager::ConnectionManager(QString name, SecurityMode securityMode, QObject* parent)
+    : QObject{ parent }, server{ name, securityMode, this }
+{
+    connect(&server, &QWebSocketServer::newConnection,
+            this, &ConnectionManager::onClientConnected);
+    connect(&server, &QWebSocketServer::closed,
+            this, &ConnectionManager::closed);
 }
 
-bool ConnectionManager::open(quint16 port)
+bool ConnectionManager::open(QHostAddress address, quint16 port)
 {
-    bool result = server->listen(QHostAddress::Any, port);
+    bool result = server.listen(address, port);
     if(result) {
-        qDebug() << "Listening on port: " << port << ".";
+        qDebug() << "Listening by address:" << address
+                 << "on port: " << port << ".";
     }
     return result;
 }
 
 void ConnectionManager::close()
 {
-    server->close();
+    server.close();
     qDebug() << "Stoped listening.";
 }
 
 void ConnectionManager::onClientConnected()
 {
-    auto socket = server->nextPendingConnection();
+    auto socket = server.nextPendingConnection();
     auto connection = new ClientConnection(socket, this);
 
     connect(connection, &ClientConnection::disconnected,
             this, &ConnectionManager::onClientDisconnected);
 
     connections << connection;
+
+    emit newConnection(connection);
 
     qDebug() << "Client connected.";
 }
@@ -52,3 +54,5 @@ void ConnectionManager::onClientDisconnected()
         qDebug() << "Client disconnected.";
     }
 }
+
+} // srv namespace

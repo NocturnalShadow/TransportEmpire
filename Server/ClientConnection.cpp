@@ -2,6 +2,8 @@
 #include "Server/Request.h"
 #include "Server/Response.h"
 
+namespace srv {
+
 ClientConnection::ClientConnection(QWebSocket* _socket, QObject* parent)
     : QObject(parent), socket{ _socket }
 {
@@ -31,3 +33,5 @@ void ClientConnection::onResponseReady(const Response& response) {
     role = response.getRole();
     socket->sendTextMessage(response.toString());
 }
+
+} // srv namespace

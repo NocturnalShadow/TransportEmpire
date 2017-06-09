@@ -6,12 +6,20 @@
 #include "Server/Controllers/RouteController.h"
 #include "Server/Controllers/UserController.h"
 
+namespace db {
+    class Database;
+}
+
+namespace srv {
+
 class RouterWizard
 {
 public:
-    static void setUpControllers(Router* router)
+    static void setUp(Router* router, db::Database* database)
     {
-        router->addController(new UserController);
-        router->addController(new RouteController);
+        router->addController(new UserController{ database });
+        router->addController(new RouteController{ database });
     }
 };
+
+} // srv namespace

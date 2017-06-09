@@ -1,11 +1,13 @@
 #pragma once
 
-#include "Specification.h"
+#include "Role.h"
 #include "Server/Request.h"
 
 #include <QString>
 #include <QJsonObject>
 #include <QJsonDocument>
+
+namespace srv {
 
 class Response
 {
@@ -23,6 +25,7 @@ public:
 public:
     QJsonObject&    getDataRef();
     Role            getRole()       const;
+    Code            getCode()       const;
 
     void setCode(Code _code);
     void setRole(Role _role);
@@ -41,3 +44,5 @@ enum Response::Code {
     Forbidden		= 403,
     NotFound		= 404
 };
+
+} // srv namespace

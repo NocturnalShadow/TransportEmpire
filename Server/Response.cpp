@@ -1,4 +1,6 @@
-#include "Response.h"
+#include "Server/Response.h"
+
+namespace srv {
 
 Response::Response(const Request& request)
     : role{ request.getRole()     },
@@ -19,6 +21,10 @@ Role Response::getRole() const {
     return role;
 }
 
+Response::Code Response::getCode() const {
+    return code;
+}
+
 QJsonObject& Response::getDataRef() {
 	return data;
 }
@@ -37,3 +43,5 @@ QJsonDocument Response::toJsonDocument() const {
     reply["data"]       = data;
     return QJsonDocument{ reply };
 }
+
+} // srv namespace

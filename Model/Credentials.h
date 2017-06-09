@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Specification.h"
+#include "Role.h"
 #include "Database/Entity.h"
 
 #include <QtCore/QDebug>

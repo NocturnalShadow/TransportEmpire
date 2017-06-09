@@ -9,6 +9,8 @@
 #include <QRunnable>
 #include <QScopedPointer>
 
+namespace srv {
+
 class Task : public QObject, public QRunnable
 {
     Q_OBJECT
@@ -37,3 +39,5 @@ signals:
     void responseReady(const Response& response);
 
 };
+
+} // srv namespace

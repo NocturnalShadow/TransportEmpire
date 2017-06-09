@@ -1,13 +1,17 @@
 #pragma once
 
-#include "Server/Controller.h"
-#include "Server/ClientConnection.h"
+#include "Server/Request.h"
 
 #include <vector>
 #include <memory>
 
 #include <QObject>
 #include <QVector>
+
+namespace srv {
+
+class IController;
+class ClientConnection;
 
 class Router : public QObject
 {
@@ -23,10 +27,10 @@ public:
     void addControllers(QVector<IController*> controls);
 
 public slots:
-    void onRequestReceived(const Request& request);
+    void registerConnection(ClientConnection* connection);
 
 signals:
     void requestReceived(const Request& request, ClientConnection* sender);
 };
 
-
+} // srv namespace

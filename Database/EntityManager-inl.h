@@ -11,7 +11,7 @@ Pointer<T> EntityManager::load(unsigned int id)
 }
 
 template<class T>
-QVector<Pointer<T>> EntityManager::load(const query<T>& _query)
+QVector<Pointer<T>> EntityManager::load(const Query<T>& _query)
 {
     return transactive([] () {
         result<T> queryResult{ db->query<T>(_query) };
@@ -26,10 +26,10 @@ LazyPointer<T> EntityManager::loadLater(unsigned int id)
 }
 
 template<class T>
-QVector<LazyPointer<T>> EntityManager::loadLater(const query<T> &_query)
+QVector<LazyPointer<T>> EntityManager::loadLater(const Query<T> &_query)
 {
     return transactive([] () {
-        result<T> queryResult{ db->query<T>(_query) };
+        odb::result<T> queryResult{ db->query<T>(_query) };
 
         QVector<LazyPointer<T>> loadResult;
         loadResult.reserve(queryResult.size());
@@ -43,7 +43,7 @@ QVector<LazyPointer<T>> EntityManager::loadLater(const query<T> &_query)
 }
 
 template<class T>
-void EntityManager::erase(const query<T>& _query)
+void EntityManager::erase(const Query<T>& _query)
 {
     transactive([&] () {
         db->erase_query<T>(_query);

@@ -2,6 +2,8 @@
 
 #include "Database/EntityManager.h"
 
+namespace srv {
+
 RouteController::RouteController(db::Database* database)
     : IController{ database }
 {
@@ -35,3 +37,4 @@ IController::RequestHandler RouteController::requestHandler(Request::Type reques
     }
 }
 
+} // srv namespace

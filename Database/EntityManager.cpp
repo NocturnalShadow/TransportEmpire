@@ -4,6 +4,8 @@
 
 namespace db {
 
+using namespace odb;
+
 EntityManager::EntityManager(database* _db)
     : db{ _db }, se{ false }
 {

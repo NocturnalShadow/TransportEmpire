@@ -1,28 +1,44 @@
 #include "Server/Server.h"
 #include "Server/ClientConnection.h"
 #include "Server/ConnectionManager.h"
+#include "Server/Router.h"
+#include "Server/RouterWizard.h"
 
-#include "Database/Database.h"
+namespace srv {
 
-WebServer::WebServer(QObject* parent)
-    : QObject(parent)
+Server::Server(db::Database* database, QObject* parent)
+    : QObject{ parent },
+      router{ new Router{ this } },
+      connectionManager{
+          new ConnectionManager{ name, securityMode, this }
+        }
 {
+    RouterWizard::setUp(router, database);
+
+    connect(connectionManager, &ConnectionManager::newConnection,
+            router, &Router::registerConnection);
 }
 
-void WebServer::setAddress(const QHostAddress& _address) {
+void Server::setAddress(const QHostAddress& _address) {
     address = _address;
 }
 
-void WebServer::setPort(quint16 _port) {
+void Server::setPort(quint16 _port) {
     port = _port;
 }
 
-void WebServer::launch() {
+void Server::setName(QString _name)
+{
+    name = _name;
+}
+
+void Server::launch() {
     isRunning = connectionManager->open(address, port);
 }
 
-void WebServer::stop() {
+void Server::stop() {
     connectionManager->close();
     emit stoped();
 }
 
+} // srv namespace

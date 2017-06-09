@@ -12,17 +12,19 @@
 
 namespace db
 {
-using namespace odb;
+
+template<typename T>
+using Query = odb::query<T>;
 
 class EntityManager : public QObject
 {
     Q_OBJECT
 private:
-    database* db = nullptr;
-    session se;
+    odb::database* db = nullptr;
+    odb::session se;
 
 public:
-    EntityManager(database* _db);
+    EntityManager(odb::database* _db);
     virtual ~EntityManager() = default;
 
 public:
@@ -48,16 +50,16 @@ public:
     Pointer<T> load(unsigned int id);
 
     template<class T>
-    QVector<Pointer<T>> load(const query<T>& _query);
+    QVector<Pointer<T>> load(const Query<T>& _query);
 
     template<class T>
     LazyPointer<T> loadLater(unsigned int id);
 
     template<class T>
-    QVector<LazyPointer<T>> loadLater(const query<T>& _query);
+    QVector<LazyPointer<T>> loadLater(const Query<T>& _query);
 
     template<class T>
-    void erase(const query<T>& _query);
+    void erase(const Query<T>& _query);
 
 private:
     template<class Action>

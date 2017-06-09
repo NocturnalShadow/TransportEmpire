@@ -1,12 +1,12 @@
 #pragma once
 
+#include "Role.h"
+
 #include <QObject>
 #include <QWebSocket>
 #include <QScopedPointer>
 
-#include <QDebug>
-
-#include "Specification.h"
+namespace srv {
 
 class Request;
 class Response;
@@ -32,3 +32,4 @@ signals:
     void disconnected();
 };
 
+} // srv namespace

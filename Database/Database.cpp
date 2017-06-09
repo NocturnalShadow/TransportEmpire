@@ -8,6 +8,9 @@
 
 namespace db {
 
+using namespace std;
+using namespace odb;
+
 Database::Database(const string& _name, const string& _instance)
     : name{ _name }, instance{ _instance }
 {

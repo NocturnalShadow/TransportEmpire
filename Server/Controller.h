@@ -11,6 +11,8 @@
 #include <QObject>
 #include <QThreadPool>
 
+namespace srv {
+
 class IController : public QObject
 {
 	Q_OBJECT
@@ -18,8 +20,8 @@ protected:
     using RequestHandler = Response (*) (const Request&, db::EntityManager* manager);
 
 private:
-    QThreadPool* pool = QThreadPool::globalInstance();
-    db::Database* database;
+    QThreadPool*    pool = QThreadPool::globalInstance();
+    db::Database*   database;
 
 public:
     IController(db::Database* _database)
@@ -42,3 +44,5 @@ public slots:
         pool->start(task);
     }
 };
+
+} // srv namespace

@@ -1,10 +1,12 @@
 #pragma once
 
-#include "Specification.h"
+#include "Role.h"
 
 #include <QString>
 #include <QJsonObject>
 #include <QJsonDocument>
+
+namespace srv {
 
 class Request
 {
@@ -42,3 +44,5 @@ enum Request::Type {
     GET_ROUTE,
     GET_ROUTE_LIST
 };
+
+} // srv namespace

@@ -1,6 +1,8 @@
-#include "Request.h"
+#include "Server/Request.h"
 
 #include <QDebug>
+
+namespace srv {
 
 Request::Request(const QString& message, Role _role)
     : role{ _role }
@@ -45,6 +47,7 @@ void Request::initialize(const QByteArray& message) {
         syntaxError = true;
         qDebug() << "Request parsing syntax error.";
     }
-
 }
+
+} // srv namespace
 

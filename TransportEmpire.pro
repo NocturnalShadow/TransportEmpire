@@ -42,10 +42,12 @@ HEADERS += \
     Server/Controllers/RouteController.h    \
     Server/Controllers/UserController.h     \
     Test/TestSuite.h                        \
-    Specification.h                         \
     Utility.h \
     Server/Response.h \
-    Server/Task.h
+    Server/Task.h \
+    Role.h \
+    Server/Server.h \
+    Test/Server/Client.h
 
 SOURCES += \
     Database/Database.cpp                   \
@@ -58,11 +60,13 @@ SOURCES += \
     Server/ConnectionManager.cpp            \
     Server/ClientConnection.cpp             \
     Server/Request.cpp                      \
-    Server/Reply.cpp                        \
     Server/Router.cpp                       \
     Server/Controllers/RouteController.cpp  \
     Server/Controllers/UserController.cpp   \
-    main.cpp
+    main.cpp \
+    Server/Response.cpp \
+    Server/Server.cpp \
+    Test/Server/Client.cpp
 
 # Select the database we are going to use.
 #

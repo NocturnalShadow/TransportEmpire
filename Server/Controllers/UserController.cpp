@@ -5,6 +5,8 @@
 #include "Model/User.h"
 #include "Model/Credentials.h"
 
+namespace srv {
+
 UserController::UserController(db::Database* database)
     : IController{ database }
 {
@@ -25,3 +27,5 @@ IController::RequestHandler UserController::requestHandler(Request::Type request
         return login;
     }
 }
+
+} // srv namespace
