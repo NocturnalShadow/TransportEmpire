@@ -1,11 +1,20 @@
 #include "Server/ConnectionManager.h"
 #include "Server/ClientConnection.h"
+#include "Server/Request.h"
+#include "Server/Response.h"
+
+#include "Utility.h"
+
+#include <QMetaType>
 
 namespace srv {
 
 ConnectionManager::ConnectionManager(QString name, SecurityMode securityMode, QObject* parent)
     : QObject{ parent }, server{ name, securityMode, this }
 {
+    qRegisterMetaType<Request>("Request");
+    qRegisterMetaType<Response>("Response");
+
     connect(&server, &QWebSocketServer::newConnection,
             this, &ConnectionManager::onClientConnected);
     connect(&server, &QWebSocketServer::closed,
@@ -16,8 +25,10 @@ bool ConnectionManager::open(QHostAddress address, quint16 port)
 {
     bool result = server.listen(address, port);
     if(result) {
-        qDebug() << "Listening by address:" << address
-                 << "on port: " << port << ".";
+        qStdOut()
+                << "Listening by address: " << address.toString()
+                << " on port: " << port << ". " << threadId()
+                << endl;
     }
     return result;
 }
@@ -25,7 +36,7 @@ bool ConnectionManager::open(QHostAddress address, quint16 port)
 void ConnectionManager::close()
 {
     server.close();
-    qDebug() << "Stoped listening.";
+    qStdOut() << "Stoped listening. " << threadId();
 }
 
 void ConnectionManager::onClientConnected()
@@ -40,7 +51,7 @@ void ConnectionManager::onClientConnected()
 
     emit newConnection(connection);
 
-    qDebug() << "Client connected.";
+    qStdOut() << "Client connected." << threadId() << endl;
 }
 
 void ConnectionManager::onClientDisconnected()
@@ -51,7 +62,7 @@ void ConnectionManager::onClientDisconnected()
         connections.removeAll(connection);
         connection->deleteLater();
 
-        qDebug() << "Client disconnected.";
+        qStdOut() << "Client disconnected." << threadId() << endl;
     }
 }
 

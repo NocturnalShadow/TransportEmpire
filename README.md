@@ -1,5 +1,9 @@
 The goal of this branch is to put all the experience acquired from other branches together make some working stuff.
 
+You can find a test client app in ..\Test\TestClient directory.
+
+The project runs in release build only with MSVC2015_64bit compiler.
+
 To run a pure executable the following dlls are required:
 > Qt5Core.dll,
 > Qt5Network.dll,
@@ -8,6 +12,8 @@ To run a pure executable the following dlls are required:
 > odb-2.4-vc12.dll,
 > odb-mssql-2.4-vc12.dll,
 > odb-qt5-2.4-vc11.dll
+> ssleay32.dll
+> libeay32.dll
 
 In order to keep the project clean and consistent you must follow the next conventions:
 - All files should be named CamelCase and start from the capital letter.

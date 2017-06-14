@@ -6,6 +6,7 @@
 #include <QString>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QMetaType>
 
 namespace srv {
 
@@ -20,6 +21,7 @@ private:
     QJsonObject     data;
 
 public:
+    Response() = default;
     Response(const Request& request);
 
 public:
@@ -46,3 +48,5 @@ enum Response::Code {
 };
 
 } // srv namespace
+
+Q_DECLARE_METATYPE(srv::Response)

@@ -23,7 +23,7 @@ public:
     EntityManager* createManagerInstance();
 
 public:
-    void Connect(const std::string& user = "", const std::string& password = "");
+    void connect(const std::string& user = "", const std::string& password = "");
 };
 
 }   // namespace db

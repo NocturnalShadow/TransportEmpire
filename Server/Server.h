@@ -1,48 +1,58 @@
 #pragma once
 
+#include "Server/ServerBuilder.h"
+
 #include <QObject>
 #include <QString>
 #include <QHostAddress>
-#include <QScopedPointer>
 #include <QWebSocketServer>
-
-namespace db {
-    class Database;
-}
 
 namespace srv {
 
 class Router;
+class ControllerSuite;
 class ConnectionManager;
+class ServerBuilder;
 
 class Server : public QObject
 {
     Q_OBJECT
+    friend class ServerBuilder;
+public:
     typedef QWebSocketServer::SslMode SecurityMode;
+
 private:
+    QString             name;
     QHostAddress        address             = QHostAddress::Any;
     quint16             port                = 8080;
-    QString             name                = "NamelessServer";
     SecurityMode        securityMode        = SecurityMode::NonSecureMode;
-
-    bool                isRunning           = false;
 
     ConnectionManager* 	connectionManager;
     Router*				router;
 
-public:
-    explicit Server(db::Database* database, QObject* parent = nullptr);
+private:
+    Server();
 
 public:
-    void setAddress(const QHostAddress& _address);
-    void setPort(quint16 _port);
-    void setName(QString _name);
+    ~Server();
 
+public:
+    static ServerBuilder build();
+
+private:
+    void setControllerSuite(ControllerSuite* suite);
+
+public:
     void launch();
-    void stop();
+    void launchAsync();
+    void terminate();
+
+private slots:
+    void onTerminate();
 
 signals:
-    void stoped();
+    void terminated();
+    void failedToLaunch();
 };
 
 } // srv namespace

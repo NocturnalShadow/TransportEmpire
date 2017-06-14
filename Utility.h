@@ -1,8 +1,10 @@
 #pragma once
 
 #include <QVector>
+#include <QThread>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QTextStream>
 
 template<typename T>
 QVector<T> toVector(const QJsonArray& jsonArray)
@@ -22,4 +24,16 @@ QJsonArray toJsonArray(const QVector<T>& vector)
         jsonArray.append(item.toJsonObject());
     }
     return std::move(jsonArray);
+}
+
+
+inline QTextStream& qStdOut()
+{
+    static QTextStream ts( stdout );
+    return ts;
+}
+
+inline auto threadId()
+{
+    return QThread::currentThreadId();
 }

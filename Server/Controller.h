@@ -37,11 +37,14 @@ public slots:
     void onRequestReceived(const Request& request, ClientConnection* sender)
     {
         RequestHandler handler = requestHandler(request.getType());
-        Task* task = new Task{ request, handler, database->createManagerInstance() };
-        connect(task, &Task::responseReady,
-                sender, &ClientConnection::onResponseReady,
-                Qt::QueuedConnection);
-        pool->start(task);
+        if(handler != nullptr)
+        {
+            Task* task = new Task{ request, handler, database->createManagerInstance() };
+            connect(task, &Task::responseReady,
+                    sender, &ClientConnection::onResponseReady,
+                    Qt::QueuedConnection);
+            pool->start(task);
+        }
     }
 };
 

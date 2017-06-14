@@ -1,6 +1,5 @@
 #include "Server/Request.h"
-
-#include <QDebug>
+#include "Utility.h"
 
 namespace srv {
 
@@ -45,7 +44,7 @@ void Request::initialize(const QByteArray& message) {
         data = request["data"].toObject();
     } else {
         syntaxError = true;
-        qDebug() << "Request parsing syntax error.";
+        qStdOut() << "Request parsing syntax error." << endl;
     }
 }
 

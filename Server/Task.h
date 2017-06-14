@@ -1,13 +1,15 @@
 #pragma once
 
-#include "Database/EntityManager.h"
-
 #include "Server/Request.h"
 #include "Server/Response.h"
 
 #include <QObject>
 #include <QRunnable>
 #include <QScopedPointer>
+
+namespace db {
+    class EntityManager;
+}
 
 namespace srv {
 

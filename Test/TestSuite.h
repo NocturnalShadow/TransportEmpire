@@ -1,8 +1,8 @@
 #pragma once
 
+#include <QTest>
 #include <QObject>
 #include <QVector>
-#include <QtTest/QtTest>
 
 // This is the based class for all unit testing suites
 class QTestSuite : public QObject

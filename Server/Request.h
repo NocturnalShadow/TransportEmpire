@@ -5,6 +5,7 @@
 #include <QString>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QMetaType>
 
 namespace srv {
 
@@ -21,6 +22,7 @@ private:
     bool syntaxError = false;
 
 public:
+    Request() = default;
     Request(const QString& message, Role _role = Role::CUSTOMER);
     Request(const QByteArray& message, Role _role = Role::CUSTOMER);
 
@@ -46,3 +48,5 @@ enum Request::Type {
 };
 
 } // srv namespace
+
+Q_DECLARE_METATYPE(srv::Request)

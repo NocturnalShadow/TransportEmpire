@@ -1,11 +1,18 @@
-#include <QDebug>
 #include <QCoreApplication>
+#include <QThread>
 
 #include "Test/TestSuite.h"
 
-#include "Server/ConnectionManager.h"
+#include "Server/Server.h"
+#include "Server/ControllerSuite.h"
+#include "Server/Controllers/RouteController.h"
+#include "Server/Controllers/UserController.h"
 
 #include "Database/Database.h"
+#include "Database/EntityManager.h"
+
+#include "Utility.h"
+
 
 int main(int argc, char* argv[])
 {
@@ -16,11 +23,23 @@ int main(int argc, char* argv[])
 	QTestSuite::RunAllTests(argc, argv);
 #endif
 
-//	WebServer server;
-//	server.open(8080);
+    qStdOut() << "Native thread: " << QThread::currentThreadId() << endl;
 
-    db::Database db{ "TransportEmpireDB" };
-    db.Connect();
+    db::Database database{ "TransportEmpireDB" };
+    database.connect();
 
-	return app.exec();
+    auto suite = new srv::ControllerSuite{ &database };
+    suite->add<srv::UserController>();
+    suite->add<srv::RouteController>();
+
+    auto server = srv::Server::build()
+            .name("Test Server")
+            .address(QHostAddress::LocalHost)
+            .port(8080)
+            .controllerSuite(suite)
+            .makeUnique();
+
+    server->launchAsync();
+
+    return app.exec();
 }

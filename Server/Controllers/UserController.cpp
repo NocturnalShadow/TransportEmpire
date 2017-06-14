@@ -1,9 +1,8 @@
 #include "Server/Controllers/UserController.h"
-
 #include "Database/EntityManager.h"
+#include "Utility.h"
 
-#include "Model/User.h"
-#include "Model/Credentials.h"
+#include <QTest>
 
 namespace srv {
 
@@ -14,7 +13,9 @@ UserController::UserController(db::Database* database)
 
 Response UserController::login(const Request& request, db::EntityManager* manager)
 {
-    Credentials provided{ request.getData() };
+    qStdOut() << "LOGIN command. " << threadId() << endl;
+
+    QTest::qSleep(400);         // blocks the thread
 
     return Response(request);
 }
@@ -25,6 +26,8 @@ IController::RequestHandler UserController::requestHandler(Request::Type request
     {
     case Request::LOGIN:
         return login;
+    default:
+        return nullptr;
     }
 }
 

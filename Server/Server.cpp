@@ -1,44 +1,72 @@
 #include "Server/Server.h"
+#include "Server/ServerBuilder.h"
 #include "Server/ClientConnection.h"
 #include "Server/ConnectionManager.h"
 #include "Server/Router.h"
-#include "Server/RouterWizard.h"
+
+#include "Utility.h"
 
 namespace srv {
 
-Server::Server(db::Database* database, QObject* parent)
-    : QObject{ parent },
-      router{ new Router{ this } },
-      connectionManager{
+Server::Server()
+    : router{ new Router{ this } },
+      connectionManager {
           new ConnectionManager{ name, securityMode, this }
-        }
+      }
 {
-    RouterWizard::setUp(router, database);
-
     connect(connectionManager, &ConnectionManager::newConnection,
             router, &Router::registerConnection);
 }
 
-void Server::setAddress(const QHostAddress& _address) {
-    address = _address;
-}
-
-void Server::setPort(quint16 _port) {
-    port = _port;
-}
-
-void Server::setName(QString _name)
+Server::~Server()
 {
-    name = _name;
+    terminate();
 }
 
-void Server::launch() {
-    isRunning = connectionManager->open(address, port);
+ServerBuilder Server::build()
+{
+    return ServerBuilder{};
 }
 
-void Server::stop() {
+void Server::setControllerSuite(ControllerSuite* suite)
+{
+    suite->setParent(this);
+    router->addControllerSuite(suite);
+}
+
+void Server::launch()
+{
+    bool launched = connectionManager->open(address, port);
+    if(!launched) {
+        emit failedToLaunch();
+    }
+}
+
+void Server::launchAsync()
+{
+    QThread* thread = new QThread;
+    this->moveToThread(thread);
+
+    connect(thread, &QThread::started, this, &Server::launch);
+    connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+
+    connect(this, &Server::terminated, thread, &QThread::quit);
+    connect(this, &Server::failedToLaunch, thread, &QThread::quit);
+
+    thread->start();
+}
+
+
+void Server::terminate()
+{
+    QMetaObject::invokeMethod(this, "onTerminate");
+}
+
+void Server::onTerminate()
+{
     connectionManager->close();
-    emit stoped();
+
+    emit terminated();
 }
 
 } // srv namespace

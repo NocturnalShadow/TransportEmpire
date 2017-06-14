@@ -1,26 +1,21 @@
 #include "Server/Router.h"
 #include "Server/Controller.h"
+#include "Server/ControllerSuite.h"
 #include "Server/ClientConnection.h"
 
 namespace srv {
 
 Router::Router(QObject* parent)
-	: QObject(parent)
+    : QObject{ parent }
 {
 }
 
-
-void Router::addController(IController* controller)
+void Router::addControllerSuite(const ControllerSuite* suite)
 {
-    controls.emplace_back(controller);
-	connect(this, &Router::requestReceived,
-            controller, &IController::onRequestReceived);
-}
-
-void Router::addControllers(QVector<IController*> _controls)
-{
-    for(auto controller : _controls) {
-		addController(controller);
+    for(auto controller : suite->controllers())
+    {
+        connect(this, &Router::requestReceived,
+                controller, &IController::onRequestReceived);
     }
 }
 

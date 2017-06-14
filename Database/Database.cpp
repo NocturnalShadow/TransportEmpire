@@ -25,7 +25,7 @@ EntityManager* Database::createManagerInstance()
     return new EntityManager{ db.get() };
 }
 
-void Database::Connect(const string& user, const string& password)
+void Database::connect(const string& user, const string& password)
 {
     try {
         db = make_unique<mssql::database>(user,

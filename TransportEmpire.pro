@@ -1,4 +1,4 @@
-QT += core websockets concurrent testlib
+QT += core websockets network concurrent testlib
 QT -= gui
 
 CONFIG += c++11
@@ -15,6 +15,9 @@ TEMPLATE = app
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
+
+#DEFINES += QT_NO_DEBUG_OUTPUT
+#DEFINES += QT_NO_DEBUG
 
 # You can also make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -33,21 +36,21 @@ HEADERS += \
     Model/Credentials-map.h                 \
     Model/User.h                            \
     Model/User-map.h                        \
+    Server/Server.h                         \
+    Server/ServerBuilder.h                  \
     Server/ClientConnection.h               \
     Server/ConnectionManager.h              \
     Server/Request.h                        \
+    Server/Response.h                       \
     Server/Router.h                         \
-    Server/RouterWizard.h                   \
+    Server/Task.h                           \
     Server/Controller.h                     \
+    Server/ControllerSuite.h                \
     Server/Controllers/RouteController.h    \
     Server/Controllers/UserController.h     \
     Test/TestSuite.h                        \
-    Utility.h \
-    Server/Response.h \
-    Server/Task.h \
-    Role.h \
-    Server/Server.h \
-    Test/Server/Client.h
+    Utility.h                               \
+    Role.h
 
 SOURCES += \
     Database/Database.cpp                   \
@@ -57,16 +60,16 @@ SOURCES += \
     Model/Credentials.cpp                   \
     Model/Route.cpp                         \
     Model/User.cpp                          \
+    Server/Server.cpp                       \
+    Server/ServerBuilder.cpp                \
     Server/ConnectionManager.cpp            \
     Server/ClientConnection.cpp             \
     Server/Request.cpp                      \
+    Server/Response.cpp                     \
     Server/Router.cpp                       \
     Server/Controllers/RouteController.cpp  \
     Server/Controllers/UserController.cpp   \
-    main.cpp \
-    Server/Response.cpp \
-    Server/Server.cpp \
-    Test/Server/Client.cpp
+    main.cpp
 
 # Select the database we are going to use.
 #

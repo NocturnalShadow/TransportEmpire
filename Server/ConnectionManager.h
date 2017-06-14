@@ -15,7 +15,7 @@ public:
     typedef QWebSocketServer::SslMode SecurityMode;
 
 public:
-    explicit ConnectionManager(QString name, SecurityMode securityMode, QObject* parent = nullptr);
+    ConnectionManager(QString name, SecurityMode securityMode, QObject* parent = nullptr);
 
 private:
     QWebSocketServer            server;
