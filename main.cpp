@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
 //    TransportEmpireApp application;
 
 #ifdef QT_DEBUG
-	// Runs all unit tests instantiated as QTestSuite
+    // Runs all unit tests instantiated as QTestSuite
     QTestSuite::RunAllTests(argc, argv);
 #endif
 

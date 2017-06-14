@@ -49,9 +49,9 @@ HEADERS += \
     Server/Controllers/RouteController.h    \
     Server/Controllers/UserController.h     \
     Test/TestSuite.h                        \
+    Test/Suites/DatabaseSuite.h             \
     Utility.h                               \
-    Role.h \
-    Test/Suites/DatabaseSuite.h \
+    Role.h                                  \
     TransportEmpireApp.h
 
 SOURCES += \
@@ -71,9 +71,9 @@ SOURCES += \
     Server/Router.cpp                       \
     Server/Controllers/RouteController.cpp  \
     Server/Controllers/UserController.cpp   \
-    main.cpp \
-    Test/Suites/DatabaseSuite.cpp \
-    TransportEmpireApp.cpp
+    Test/Suites/DatabaseSuite.cpp           \
+    TransportEmpireApp.cpp                  \
+    main.cpp
 
 # Select the database we are going to use.
 #
@@ -87,7 +87,18 @@ INCLUDEPATH += "./Libraries/ODB/libodb-qt"
 
 # Link to the ODB runtime libraries.
 #
-LIBS += -L"$$_PRO_FILE_PWD_/Libraries/ODB/libodb/lib64/"        -lodb
-LIBS += -L"$$_PRO_FILE_PWD_/Libraries/ODB/libodb-mssql/lib64/"  -lodb-mssql
-LIBS += -L"$$_PRO_FILE_PWD_/Libraries/ODB/libodb-qt/lib64/"     -lodb-qt
+LIBS += -L"$$_PRO_FILE_PWD_/Libraries/ODB/libodb/lib64/"
+LIBS += -L"$$_PRO_FILE_PWD_/Libraries/ODB/libodb-mssql/lib64/"
+LIBS += -L"$$_PRO_FILE_PWD_/Libraries/ODB/libodb-qt/lib64/"
+
+CONFIG(debug, debug|release) {
+    LIBS += -lodb-d
+    LIBS += -lodb-mssql-d
+    LIBS += -lodb-qt
+}
+CONFIG(release, debug|release) {
+    LIBS += -lodb
+    LIBS += -lodb-mssql
+    LIBS += -lodb-qt
+}
 
