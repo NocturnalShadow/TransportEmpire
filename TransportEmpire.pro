@@ -50,7 +50,9 @@ HEADERS += \
     Server/Controllers/UserController.h     \
     Test/TestSuite.h                        \
     Utility.h                               \
-    Role.h
+    Role.h \
+    Test/Suites/DatabaseSuite.h \
+    TransportEmpireApp.h
 
 SOURCES += \
     Database/Database.cpp                   \
@@ -69,7 +71,9 @@ SOURCES += \
     Server/Router.cpp                       \
     Server/Controllers/RouteController.cpp  \
     Server/Controllers/UserController.cpp   \
-    main.cpp
+    main.cpp \
+    Test/Suites/DatabaseSuite.cpp \
+    TransportEmpireApp.cpp
 
 # Select the database we are going to use.
 #

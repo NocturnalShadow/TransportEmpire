@@ -1,45 +1,50 @@
 #include <QCoreApplication>
-#include <QThread>
+
+#include "TransportEmpireApp.h"
 
 #include "Test/TestSuite.h"
-
-#include "Server/Server.h"
-#include "Server/ControllerSuite.h"
-#include "Server/Controllers/RouteController.h"
-#include "Server/Controllers/UserController.h"
 
 #include "Database/Database.h"
 #include "Database/EntityManager.h"
 
+#include "Model/User.h"
+
 #include "Utility.h"
+
+
+void testDatabase()
+{
+    db::Database database{ "TransportEmpireDB" }; database.connect();
+    db::EntityManager* manager = database.createManagerInstance();
+
+    Pointer<User> user {
+        new User {
+            "A", "B", Pointer<Credentials> {
+                new Credentials{ Role::ADMIN, "LOGIN", "PASSWORD" }
+            }
+        }
+    };
+
+    try {
+        manager->persist(user);
+    } catch (std::exception& e) {
+        qStdOut() << "Exception: " << e.what() << endl;
+    }
+}
 
 
 int main(int argc, char* argv[])
 {
 	QCoreApplication app(argc, argv);
 
+//    TransportEmpireApp application;
+
 #ifdef QT_DEBUG
 	// Runs all unit tests instantiated as QTestSuite
-	QTestSuite::RunAllTests(argc, argv);
+    QTestSuite::RunAllTests(argc, argv);
 #endif
 
-    qStdOut() << "Native thread: " << QThread::currentThreadId() << endl;
-
-    db::Database database{ "TransportEmpireDB" };
-    database.connect();
-
-    auto suite = new srv::ControllerSuite{ &database };
-    suite->add<srv::UserController>();
-    suite->add<srv::RouteController>();
-
-    auto server = srv::Server::build()
-            .name("Test Server")
-            .address(QHostAddress::LocalHost)
-            .port(8080)
-            .controllerSuite(suite)
-            .makeUnique();
-
-    server->launchAsync();
+    testDatabase();
 
     return app.exec();
 }

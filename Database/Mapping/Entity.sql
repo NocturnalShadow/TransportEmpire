@@ -2,6 +2,9 @@
  * compiler for C++.
  */
 
+ USE TransportEmpireDB
+ GO
+
 IF OBJECT_ID('Entity', 'U') IS NOT NULL
   DROP TABLE [Entity];
 GO

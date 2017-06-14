@@ -20,7 +20,8 @@ private:
 
 public:
     Credentials() = default;
-    Credentials(const QJsonObject& credentials);
+    Credentials(Role _role, QString _login, QString _password);
+    Credentials(QJsonObject credentials);
 
 public:
     QString getLogin()  const { return login;   }

@@ -1,7 +1,12 @@
 #include "Credentials.h"
 
 
-Credentials::Credentials(const QJsonObject& credentials)
+Credentials::Credentials(Role _role, QString _login, QString _password)
+    : role{ _role }, login{ _login }, password{ _password }
+{
+}
+
+Credentials::Credentials(QJsonObject credentials)
     : login { credentials["login"].toString() },
       password { credentials["password"].toString() }
 {
