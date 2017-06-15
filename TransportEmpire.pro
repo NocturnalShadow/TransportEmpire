@@ -52,16 +52,21 @@ HEADERS += \
     Test/Suites/DatabaseSuite.h             \
     Utility.h                               \
     Role.h                                  \
-    TransportEmpireApp.h
+    function_traits.h                       \
+    TransportEmpireApp.h \
+    Database/Transaction.h
 
 SOURCES += \
     Database/Database.cpp                   \
     Database/EntityManager.cpp              \
     Database/Entity-map.cpp                 \
-    Model/City.cpp                          \
+    Database/Mapping/Entity-odb.cpp         \
     Model/Credentials.cpp                   \
-    Model/Route.cpp                         \
+    Model/Mapping/Credentials-odb.cpp       \
     Model/User.cpp                          \
+    Model/Mapping/User-odb.cpp              \
+    Model/City.cpp                          \
+    Model/Route.cpp                         \
     Server/Server.cpp                       \
     Server/ServerBuilder.cpp                \
     Server/ConnectionManager.cpp            \
@@ -101,4 +106,5 @@ CONFIG(release, debug|release) {
     LIBS += -lodb-mssql
     LIBS += -lodb-qt
 }
+
 

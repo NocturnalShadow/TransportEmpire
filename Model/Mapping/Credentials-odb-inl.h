@@ -34,6 +34,8 @@ namespace odb
   }
 }
 
+#include <odb/details/unique-ptr.hxx>
+
 namespace odb
 {
   // Credentials
@@ -70,6 +72,44 @@ namespace odb
     v[1UL] = i.base->version;
     b[0UL].version++;
     b[1UL].version++;
+  }
+
+  inline
+  access::object_traits_impl< ::Credentials, id_mssql >::root_traits::image_type&
+  access::object_traits_impl< ::Credentials, id_mssql >::
+  root_image (image_type& i)
+  {
+    return base_traits::root_image (*i.base);
+  }
+
+  inline
+  access::object_traits_impl< ::Credentials, id_mssql >::image_type*
+  access::object_traits_impl< ::Credentials, id_mssql >::
+  clone_image (image_type& i)
+  {
+    details::unique_ptr<base_traits::image_type> p (
+      base_traits::clone_image (*i.base));
+    image_type* c (new image_type (i));
+    c->base = p.release ();
+    return c;
+  }
+
+  inline
+  void access::object_traits_impl< ::Credentials, id_mssql >::
+  copy_image (image_type& d, image_type& s)
+  {
+    base_traits::image_type* b (d.base);
+    base_traits::copy_image (*b, *s.base);
+    d = s;
+    d.base = b;
+  }
+
+  inline
+  void access::object_traits_impl< ::Credentials, id_mssql >::
+  free_image (image_type* i)
+  {
+    base_traits::free_image (i->base);
+    delete i;
   }
 }
 

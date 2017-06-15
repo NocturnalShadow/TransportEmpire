@@ -2,13 +2,18 @@
 
 #include <odb/database.hxx>
 #include <odb/mssql/database.hxx>
+#include <odb/query.hxx>
+#include <odb/core.hxx>
 
 #include <QObject>
 #include <QVector>
 #include <QScopedPointer>
 
+#include <type_traits>
+
 #include "Database/Pointer.h"
 #include "Database/Entity.h"
+#include "Database/Transaction.h"
 
 namespace db
 {
@@ -21,7 +26,7 @@ class EntityManager : public QObject
     Q_OBJECT
 private:
     odb::database* db = nullptr;
-    odb::session se;
+    odb::session session;
 
 public:
     EntityManager(odb::database* _db);
@@ -30,9 +35,7 @@ public:
 public:
     void startSession();
 
-    void abortTransaction();
-    void beginTransaction();
-    void endTransaction();
+    Transaction transaction();
 
     void persist(Entity& entity);
     void persist(Pointer<Entity> entity);
@@ -61,9 +64,14 @@ public:
     template<class T>
     void erase(const Query<T>& _query);
 
-private:
     template<class Action>
     auto transactive(Action action);
+
+private:
+    template<class Action>
+    void _transactive(Action action, std::true_type);
+    template<class Action>
+    auto _transactive(Action action, std::false_type);
 };
 
 }   // namespace db

@@ -56,8 +56,11 @@
 #include <odb/session.hxx>
 #include <odb/cache-traits.hxx>
 #include <odb/polymorphic-info.hxx>
+#include <odb/result.hxx>
+#include <odb/polymorphic-object-result.hxx>
 
 #include <odb/details/unused.hxx>
+#include <odb/details/shared-ptr.hxx>
 
 namespace odb
 {
@@ -122,11 +125,89 @@ namespace odb
 #include <odb/mssql/forward.hxx>
 #include <odb/mssql/binding.hxx>
 #include <odb/mssql/mssql-types.hxx>
+#include <odb/mssql/query.hxx>
 
 namespace odb
 {
   // User
   //
+  template <typename A>
+  struct pointer_query_columns< ::User, id_mssql, A >:
+    pointer_query_columns< ::db::Entity, id_mssql, typename A::base_traits >
+  {
+    // Entity
+    //
+    typedef pointer_query_columns< ::db::Entity, id_mssql, typename A::base_traits > Entity;
+
+    // id
+    //
+    typedef
+    mssql::query_column<
+      mssql::value_traits<
+        unsigned int,
+        mssql::id_int >::query_type,
+      mssql::id_int >
+    id_type_;
+
+    static const id_type_ id;
+
+    // firstName
+    //
+    typedef
+    mssql::query_column<
+      mssql::value_traits<
+        ::QString,
+        mssql::id_string >::query_type,
+      mssql::id_string >
+    firstName_type_;
+
+    static const firstName_type_ firstName;
+
+    // lastName
+    //
+    typedef
+    mssql::query_column<
+      mssql::value_traits<
+        ::QString,
+        mssql::id_string >::query_type,
+      mssql::id_string >
+    lastName_type_;
+
+    static const lastName_type_ lastName;
+
+    // credentials
+    //
+    typedef
+    mssql::query_column<
+      mssql::value_traits<
+        unsigned int,
+        mssql::id_int >::query_type,
+      mssql::id_int >
+    credentials_type_;
+
+    static const credentials_type_ credentials;
+  };
+
+  template <typename A>
+  const typename pointer_query_columns< ::User, id_mssql, A >::id_type_
+  pointer_query_columns< ::User, id_mssql, A >::
+  id (A::table_name, "[id]", 0);
+
+  template <typename A>
+  const typename pointer_query_columns< ::User, id_mssql, A >::firstName_type_
+  pointer_query_columns< ::User, id_mssql, A >::
+  firstName (A::table_name, "[firstName]", 0, 512);
+
+  template <typename A>
+  const typename pointer_query_columns< ::User, id_mssql, A >::lastName_type_
+  pointer_query_columns< ::User, id_mssql, A >::
+  lastName (A::table_name, "[lastName]", 0, 512);
+
+  template <typename A>
+  const typename pointer_query_columns< ::User, id_mssql, A >::credentials_type_
+  pointer_query_columns< ::User, id_mssql, A >::
+  credentials (A::table_name, "[credentials]", 0);
+
   template <>
   class access::object_traits_impl< ::User, id_mssql >:
     public access::object_traits< ::User >
@@ -169,6 +250,8 @@ namespace odb
 
     struct extra_statement_cache_type;
 
+    struct credentials_tag;
+
     using object_traits<object_type>::id;
 
     static void
@@ -209,6 +292,8 @@ namespace odb
     mssql::polymorphic_root_object_statements<root_type>
     root_statements_type;
 
+    typedef mssql::query_base query_base_type;
+
     static const std::size_t column_count = 4UL;
     static const std::size_t id_column_count = 1UL;
     static const std::size_t inverse_column_count = 0UL;
@@ -225,6 +310,10 @@ namespace odb
     static const std::size_t find_column_counts[depth];
     static const char update_statement[];
     static const char erase_statement[];
+    static const char query_statement[];
+    static const char erase_query_statement[];
+
+    static const char table_name[];
 
     static void
     persist (database&, object_type&, bool top = true, bool dyn = true);
@@ -247,6 +336,12 @@ namespace odb
     static void
     erase (database&, const object_type&, bool top = true, bool dyn = true);
 
+    static result<object_type>
+    query (database&, const query_base_type&);
+
+    static unsigned long long
+    erase_query (database&, const query_base_type&);
+
     public:
     static bool
     find_ (statements_type&,
@@ -261,6 +356,18 @@ namespace odb
 
     static void
     load_ (database&, root_type&, std::size_t);
+
+    static root_traits::image_type&
+    root_image (image_type&);
+
+    static image_type*
+    clone_image (image_type&);
+
+    static void
+    copy_image (image_type&, image_type&);
+
+    static void
+    free_image (image_type*);
   };
 
   template <>
@@ -268,6 +375,143 @@ namespace odb
     public access::object_traits_impl< ::User, id_mssql >
   {
   };
+
+  // User
+  //
+  template <>
+  struct alias_traits<
+    ::db::Entity,
+    id_mssql,
+    access::object_traits_impl< ::User, id_mssql >::credentials_tag>
+  {
+    static const char table_name[];
+  };
+
+  template <>
+  struct alias_traits<
+    ::Credentials,
+    id_mssql,
+    access::object_traits_impl< ::User, id_mssql >::credentials_tag>
+  {
+    typedef alias_traits<
+      ::db::Entity,
+      id_mssql,
+      access::object_traits_impl< ::User, id_mssql >::credentials_tag>
+    base_traits;
+
+    static const char table_name[];
+  };
+
+  template <>
+  struct query_columns_base< ::User, id_mssql >
+  {
+    // credentials
+    //
+    typedef
+    odb::alias_traits<
+      ::Credentials,
+      id_mssql,
+      access::object_traits_impl< ::User, id_mssql >::credentials_tag>
+    credentials_alias_;
+  };
+
+  template <typename A>
+  struct query_columns< ::User, id_mssql, A >:
+    query_columns_base< ::User, id_mssql >,
+    query_columns< ::db::Entity, id_mssql, typename A::base_traits >
+  {
+    // Entity
+    //
+    typedef query_columns< ::db::Entity, id_mssql, typename A::base_traits > Entity;
+
+    // id
+    //
+    typedef
+    mssql::query_column<
+      mssql::value_traits<
+        unsigned int,
+        mssql::id_int >::query_type,
+      mssql::id_int >
+    id_type_;
+
+    static const id_type_ id;
+
+    // firstName
+    //
+    typedef
+    mssql::query_column<
+      mssql::value_traits<
+        ::QString,
+        mssql::id_string >::query_type,
+      mssql::id_string >
+    firstName_type_;
+
+    static const firstName_type_ firstName;
+
+    // lastName
+    //
+    typedef
+    mssql::query_column<
+      mssql::value_traits<
+        ::QString,
+        mssql::id_string >::query_type,
+      mssql::id_string >
+    lastName_type_;
+
+    static const lastName_type_ lastName;
+
+    // credentials
+    //
+    typedef
+    mssql::query_column<
+      mssql::value_traits<
+        unsigned int,
+        mssql::id_int >::query_type,
+      mssql::id_int >
+    credentials_column_type_;
+
+    typedef
+    odb::query_pointer<
+      odb::pointer_query_columns<
+        ::Credentials,
+        id_mssql,
+        credentials_alias_ > >
+    credentials_pointer_type_;
+
+    struct credentials_type_: credentials_pointer_type_, credentials_column_type_
+    {
+      credentials_type_ (const char* t,
+                         const char* c,
+                         const char* conv,
+                         unsigned short p = 0,
+                         unsigned short s = 0xFFFF)
+        : credentials_column_type_ (t, c, conv, p, s)
+      {
+      }
+    };
+
+    static const credentials_type_ credentials;
+  };
+
+  template <typename A>
+  const typename query_columns< ::User, id_mssql, A >::id_type_
+  query_columns< ::User, id_mssql, A >::
+  id (A::table_name, "[id]", 0);
+
+  template <typename A>
+  const typename query_columns< ::User, id_mssql, A >::firstName_type_
+  query_columns< ::User, id_mssql, A >::
+  firstName (A::table_name, "[firstName]", 0, 512);
+
+  template <typename A>
+  const typename query_columns< ::User, id_mssql, A >::lastName_type_
+  query_columns< ::User, id_mssql, A >::
+  lastName (A::table_name, "[lastName]", 0, 512);
+
+  template <typename A>
+  const typename query_columns< ::User, id_mssql, A >::credentials_type_
+  query_columns< ::User, id_mssql, A >::
+  credentials (A::table_name, "[credentials]", 0);
 }
 
 #include "User-odb-inl.h"

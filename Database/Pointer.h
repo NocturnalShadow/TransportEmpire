@@ -16,3 +16,9 @@ using LazyPointer = QLazySharedPointer<T>;
 
 template<class T>
 using LazyWeakPointer = QLazyWeakPointer<T>;
+
+template<class T, class ... Args>
+Pointer<T> make(Args && ... args)
+{
+    return QSharedPointer<T>::create(std::forward<Args>(args)...);
+}

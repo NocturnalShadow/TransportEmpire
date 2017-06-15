@@ -37,7 +37,7 @@
 
 #include <odb/pre.hxx>
 
-#include "Entity.h"
+#include "Database/Entity.h"
 
 #include <memory>
 #include <cstddef>
@@ -53,8 +53,11 @@
 #include <odb/session.hxx>
 #include <odb/cache-traits.hxx>
 #include <odb/polymorphic-info.hxx>
+#include <odb/result.hxx>
+#include <odb/polymorphic-object-result.hxx>
 
 #include <odb/details/unused.hxx>
+#include <odb/details/shared-ptr.hxx>
 
 namespace odb
 {
@@ -119,11 +122,73 @@ namespace odb
 #include <odb/mssql/forward.hxx>
 #include <odb/mssql/binding.hxx>
 #include <odb/mssql/mssql-types.hxx>
+#include <odb/mssql/query.hxx>
 
 namespace odb
 {
   // Entity
   //
+  template <typename A>
+  struct query_columns< ::db::Entity, id_mssql, A >
+  {
+    // id
+    //
+    typedef
+    mssql::query_column<
+      mssql::value_traits<
+        unsigned int,
+        mssql::id_int >::query_type,
+      mssql::id_int >
+    id_type_;
+
+    static const id_type_ id;
+
+    // typeid_
+    //
+    typedef
+    mssql::query_column<
+      mssql::value_traits<
+        ::std::string,
+        mssql::id_string >::query_type,
+      mssql::id_string >
+    typeid__type_;
+
+    static const typeid__type_ typeid_;
+
+    // version
+    //
+    typedef
+    mssql::query_column<
+      mssql::value_traits<
+        unsigned int,
+        mssql::id_int >::query_type,
+      mssql::id_int >
+    version_type_;
+
+    static const version_type_ version;
+  };
+
+  template <typename A>
+  const typename query_columns< ::db::Entity, id_mssql, A >::id_type_
+  query_columns< ::db::Entity, id_mssql, A >::
+  id (A::table_name, "[id]", 0);
+
+  template <typename A>
+  const typename query_columns< ::db::Entity, id_mssql, A >::typeid__type_
+  query_columns< ::db::Entity, id_mssql, A >::
+  typeid_ (A::table_name, "[typeid]", 0, 256);
+
+  template <typename A>
+  const typename query_columns< ::db::Entity, id_mssql, A >::version_type_
+  query_columns< ::db::Entity, id_mssql, A >::
+  version (A::table_name, "[version]", 0);
+
+  template <typename A>
+  struct pointer_query_columns< ::db::Entity, id_mssql, A >:
+    query_columns< ::db::Entity, id_mssql, A >
+  {
+  };
+
   template <>
   class access::object_traits_impl< ::db::Entity, id_mssql >:
     public access::object_traits< ::db::Entity >
@@ -180,10 +245,12 @@ namespace odb
 
       std::size_t version;
 
+      mssql::change_callback change_callback_;
+
       mssql::change_callback*
       change_callback ()
       {
-        return 0;
+        return &change_callback_;
       }
     };
 
@@ -193,6 +260,9 @@ namespace odb
 
     static id_type
     id (const id_image_type&);
+
+    static id_type
+    id (const image_type&);
 
     static version_type
     version (const image_type&);
@@ -227,6 +297,8 @@ namespace odb
 
     typedef statements_type root_statements_type;
 
+    typedef mssql::query_base query_base_type;
+
     static const std::size_t column_count = 3UL;
     static const std::size_t id_column_count = 1UL;
     static const std::size_t inverse_column_count = 0UL;
@@ -245,6 +317,10 @@ namespace odb
     static const char update_statement[];
     static const char erase_statement[];
     static const char optimistic_erase_statement[];
+    static const char query_statement[];
+    static const char erase_query_statement[];
+
+    static const char table_name[];
 
     static void
     persist (database&, object_type&, bool top = true, bool dyn = true);
@@ -267,6 +343,12 @@ namespace odb
     static void
     erase (database&, const object_type&, bool top = true, bool dyn = true);
 
+    static result<object_type>
+    query (database&, const query_base_type&);
+
+    static unsigned long long
+    erase_query (database&, const query_base_type&);
+
     public:
     static bool
     find_ (statements_type&,
@@ -282,6 +364,18 @@ namespace odb
                     const id_type&,
                     discriminator_type*,
                     version_type* = 0);
+
+    static root_traits::image_type&
+    root_image (image_type&);
+
+    static image_type*
+    clone_image (image_type&);
+
+    static void
+    copy_image (image_type&, image_type&);
+
+    static void
+    free_image (image_type*);
   };
 
   template <>
@@ -289,6 +383,9 @@ namespace odb
     public access::object_traits_impl< ::db::Entity, id_mssql >
   {
   };
+
+  // Entity
+  //
 }
 
 #include "Entity-odb-inl.h"

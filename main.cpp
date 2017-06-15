@@ -17,16 +17,10 @@ void testDatabase()
     db::Database database{ "TransportEmpireDB" }; database.connect();
     db::EntityManager* manager = database.createManagerInstance();
 
-    Pointer<User> user {
-        new User {
-            "A", "B", Pointer<Credentials> {
-                new Credentials{ Role::ADMIN, "LOGIN", "PASSWORD" }
-            }
-        }
-    };
-
     try {
-        manager->persist(user);
+        auto c = make<Credentials>(Role::ADMIN, "LOGIN2", "PASSWORD");
+        manager->persist(c);
+        manager->persist(make<User>("A", "B", c));
     } catch (std::exception& e) {
         qStdOut() << "Exception: " << e.what() << endl;
     }

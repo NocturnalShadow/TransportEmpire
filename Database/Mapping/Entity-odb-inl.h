@@ -34,6 +34,8 @@ namespace odb
   }
 }
 
+#include <odb/details/unique-ptr.hxx>
+
 namespace odb
 {
   // Entity
@@ -47,6 +49,36 @@ namespace odb
   {
     ODB_POTENTIALLY_UNUSED (sts);
     ODB_POTENTIALLY_UNUSED (obj);
+  }
+
+  inline
+  access::object_traits_impl< ::db::Entity, id_mssql >::root_traits::image_type&
+  access::object_traits_impl< ::db::Entity, id_mssql >::
+  root_image (image_type& i)
+  {
+    return i;
+  }
+
+  inline
+  access::object_traits_impl< ::db::Entity, id_mssql >::image_type*
+  access::object_traits_impl< ::db::Entity, id_mssql >::
+  clone_image (image_type& i)
+  {
+    return new image_type (i);
+  }
+
+  inline
+  void access::object_traits_impl< ::db::Entity, id_mssql >::
+  copy_image (image_type& d, image_type& s)
+  {
+    d = s;
+  }
+
+  inline
+  void access::object_traits_impl< ::db::Entity, id_mssql >::
+  free_image (image_type* i)
+  {
+    delete i;
   }
 }
 

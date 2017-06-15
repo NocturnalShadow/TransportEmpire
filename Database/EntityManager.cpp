@@ -4,10 +4,8 @@
 
 namespace db {
 
-using namespace odb;
-
-EntityManager::EntityManager(database* _db)
-    : db{ _db }, se{ false }
+EntityManager::EntityManager(odb::database* _db)
+    : db{ _db }, session{ false }
 {
 }
 
@@ -15,27 +13,14 @@ EntityManager::EntityManager(database* _db)
 
 void EntityManager::startSession()
 {
-    session::current(se);
+    odb::session::current(session);
 }
 
-void EntityManager::abortTransaction()
+Transaction EntityManager::transaction()
 {
-    if(transaction::has_current()) {
-        transaction::reset_current();
-    }
+    return Transaction{ db->begin() };
 }
 
-void EntityManager::beginTransaction()
-{
-    abortTransaction();
-    transaction(db->begin());
-}
-
-void EntityManager::endTransaction() {
-    if(transaction::has_current()) {
-        transaction::current().commit();
-    }
-}
 
 void EntityManager::persist(Entity& entity)
 {

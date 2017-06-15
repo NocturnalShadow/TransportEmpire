@@ -21,6 +21,7 @@
 #include <odb/mssql/polymorphic-object-statements.hxx>
 #include <odb/mssql/container-statements.hxx>
 #include <odb/mssql/exceptions.hxx>
+#include <odb/mssql/polymorphic-object-result.hxx>
 
 namespace odb
 {
@@ -42,6 +43,26 @@ namespace odb
   access::object_traits_impl< ::db::Entity, id_mssql >::id_type
   access::object_traits_impl< ::db::Entity, id_mssql >::
   id (const id_image_type& i)
+  {
+    mssql::database* db (0);
+    ODB_POTENTIALLY_UNUSED (db);
+
+    id_type id;
+    {
+      mssql::value_traits<
+          unsigned int,
+          mssql::id_int >::set_value (
+        id,
+        i.id_value,
+        i.id_size_ind == SQL_NULL_DATA);
+    }
+
+    return id;
+  }
+
+  access::object_traits_impl< ::db::Entity, id_mssql >::id_type
+  access::object_traits_impl< ::db::Entity, id_mssql >::
+  id (const image_type& i)
   {
     mssql::database* db (0);
     ODB_POTENTIALLY_UNUSED (db);
@@ -167,6 +188,9 @@ namespace odb
     ODB_POTENTIALLY_UNUSED (sk);
 
     using namespace mssql;
+
+    if (i.change_callback_.callback != 0)
+      (i.change_callback_.callback) (i.change_callback_.context);
 
     // typeid_
     //
@@ -303,6 +327,19 @@ namespace odb
   const char access::object_traits_impl< ::db::Entity, id_mssql >::optimistic_erase_statement[] =
   "DELETE FROM [Entity] "
   "WHERE [id]=? AND [version]=?";
+
+  const char access::object_traits_impl< ::db::Entity, id_mssql >::query_statement[] =
+  "SELECT "
+  "[Entity].[id], "
+  "[Entity].[typeid], "
+  "[Entity].[version] "
+  "FROM [Entity]";
+
+  const char access::object_traits_impl< ::db::Entity, id_mssql >::erase_query_statement[] =
+  "DELETE FROM [Entity]";
+
+  const char access::object_traits_impl< ::db::Entity, id_mssql >::table_name[] =
+  "[Entity]";
 
   void access::object_traits_impl< ::db::Entity, id_mssql >::
   persist (database& db, object_type& obj, bool top, bool dyn)
@@ -887,6 +924,81 @@ namespace odb
           i.version_size_ind == SQL_NULL_DATA);
       }
     }
+  }
+
+  result< access::object_traits_impl< ::db::Entity, id_mssql >::object_type >
+  access::object_traits_impl< ::db::Entity, id_mssql >::
+  query (database&, const query_base_type& q)
+  {
+    using namespace mssql;
+    using odb::details::shared;
+    using odb::details::shared_ptr;
+
+    mssql::connection& conn (
+      mssql::transaction::current ().connection ());
+
+    statements_type& sts (
+      conn.statement_cache ().find_object<object_type> ());
+
+    image_type& im (sts.image ());
+    binding& imb (sts.select_image_binding ());
+
+    if (im.version != sts.select_image_version () ||
+        imb.version == 0)
+    {
+      bind (imb.bind, im, statement_select);
+      sts.select_image_version (im.version);
+      imb.version++;
+    }
+
+    std::string text (query_statement);
+    if (!q.empty ())
+    {
+      text += " ";
+      text += q.clause ();
+    }
+
+    q.init_parameters ();
+    shared_ptr<select_statement> st (
+      new (shared) select_statement (
+        conn,
+        text,
+        false,
+        true,
+        q.parameters_binding (),
+        imb));
+
+    st->execute ();
+
+    shared_ptr< odb::polymorphic_object_result_impl<object_type> > r (
+      new (shared) mssql::polymorphic_object_result_impl<object_type> (
+        q, st, sts, 0));
+
+    return result<object_type> (r);
+  }
+
+  unsigned long long access::object_traits_impl< ::db::Entity, id_mssql >::
+  erase_query (database&, const query_base_type& q)
+  {
+    using namespace mssql;
+
+    mssql::connection& conn (
+      mssql::transaction::current ().connection ());
+
+    std::string text (erase_query_statement);
+    if (!q.empty ())
+    {
+      text += ' ';
+      text += q.clause ();
+    }
+
+    q.init_parameters ();
+    delete_statement st (
+      conn,
+      text,
+      q.parameters_binding ());
+
+    return st.execute ();
   }
 }
 

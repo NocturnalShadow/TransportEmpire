@@ -29,9 +29,9 @@ Currently 3 suffixes are used:
 > **Example:** #include "Database/Mapping/Entity-odb.h"
 - Only "/" symbol must be used when specifying a path. (No "\") 
 - When compiling persistent classes use the following odb compiler options:
-**--std c++14 --profile qt -d mssql --generate-session --generate-schema --hxx-suffix .h --ixx-suffix -inl.h --cxx-suffix .cpp -I ../ --output-dir Mapping**
+**--std c++14 --profile qt -d mssql --generate-session --generate-schema --generate-query --hxx-suffix .h --ixx-suffix -inl.h --cxx-suffix .cpp -I ../ --output-dir Mapping**
 	
-> **Example:** odb --std c++14 --profile qt -d mssql --generate-session --generate-schema --hxx-suffix .h --ixx-suffix -inl.h --cxx-suffix .cpp -I ../ --output-dir Mapping User.h Credentials.h
+> **Example:** odb --std c++14 --profile qt -d mssql --generate-session --generate-schema --generate-query --hxx-suffix .h --ixx-suffix -inl.h --cxx-suffix .cpp -I ../ --output-dir Mapping User.h Credentials.h
 	
 > **Note 1:** all directories with persistent classes must contain a "Mapping" directory where all odb-generated files will be stored.
 	

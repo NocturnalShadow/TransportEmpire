@@ -2,9 +2,6 @@
  * compiler for C++.
  */
 
- USE TransportEmpireDB
- GO
-
 IF OBJECT_ID('Credentials_id_fk', 'F') IS NOT NULL
   ALTER TABLE [Credentials]
     DROP CONSTRAINT [Credentials_id_fk];

@@ -21,11 +21,22 @@
 #include <odb/mssql/polymorphic-object-statements.hxx>
 #include <odb/mssql/container-statements.hxx>
 #include <odb/mssql/exceptions.hxx>
+#include <odb/mssql/polymorphic-object-result.hxx>
 
 namespace odb
 {
   // User
   //
+
+  const char alias_traits<  ::db::Entity,
+    id_mssql,
+    access::object_traits_impl< ::User, id_mssql >::credentials_tag>::
+  table_name[] = "[credentials_Entity]";
+
+  const char alias_traits<  ::Credentials,
+    id_mssql,
+    access::object_traits_impl< ::User, id_mssql >::credentials_tag>::
+  table_name[] = "[credentials_Credentials]";
 
   struct access::object_traits_impl< ::User, id_mssql >::extra_statement_cache_type
   {
@@ -109,6 +120,13 @@ namespace odb
     ODB_POTENTIALLY_UNUSED (sk);
 
     using namespace mssql;
+
+    {
+      root_traits::image_type& ri (root_image (i));
+
+      if (ri.change_callback_.callback != 0)
+        (ri.change_callback_.callback) (ri.change_callback_.context);
+    }
 
     // firstName
     //
@@ -308,6 +326,25 @@ namespace odb
   const char access::object_traits_impl< ::User, id_mssql >::erase_statement[] =
   "DELETE FROM [User] "
   "WHERE [id]=?";
+
+  const char access::object_traits_impl< ::User, id_mssql >::query_statement[] =
+  "SELECT\n"
+  "[User].[firstName],\n"
+  "[User].[lastName],\n"
+  "[User].[credentials],\n"
+  "[Entity].[id],\n"
+  "[Entity].[typeid],\n"
+  "[Entity].[version]\n"
+  "FROM [User]\n"
+  "LEFT JOIN [Entity] ON [Entity].[id]=[User].[id]\n"
+  "LEFT JOIN [Credentials] AS [credentials_Credentials] ON [credentials_Credentials].[id]=[User].[credentials]\n"
+  "LEFT JOIN [Entity] AS [credentials_Entity] ON [credentials_Entity].[id]=[credentials_Credentials].[id]";
+
+  const char access::object_traits_impl< ::User, id_mssql >::erase_query_statement[] =
+  "DELETE FROM [User]";
+
+  const char access::object_traits_impl< ::User, id_mssql >::table_name[] =
+  "[User]";
 
   void access::object_traits_impl< ::User, id_mssql >::
   persist (database& db, object_type& obj, bool top, bool dyn)
@@ -817,6 +854,82 @@ namespace odb
     st.stream_result ();
     ar.free ();
     load_ (sts, obj, false, d);
+  }
+
+  result< access::object_traits_impl< ::User, id_mssql >::object_type >
+  access::object_traits_impl< ::User, id_mssql >::
+  query (database&, const query_base_type& q)
+  {
+    using namespace mssql;
+    using odb::details::shared;
+    using odb::details::shared_ptr;
+
+    mssql::connection& conn (
+      mssql::transaction::current ().connection ());
+
+    statements_type& sts (
+      conn.statement_cache ().find_object<object_type> ());
+
+    image_type& im (sts.image ());
+    binding& imb (sts.select_image_binding (depth));
+
+    if (imb.version == 0 ||
+        check_version (sts.select_image_versions (), im))
+    {
+      bind (imb.bind, 0, 0, im, statement_select);
+      update_version (sts.select_image_versions (),
+                      im,
+                      sts.select_image_bindings ());
+    }
+
+    std::string text (query_statement);
+    if (!q.empty ())
+    {
+      text += "\n";
+      text += q.clause ();
+    }
+
+    q.init_parameters ();
+    shared_ptr<select_statement> st (
+      new (shared) select_statement (
+        conn,
+        text,
+        true,
+        true,
+        q.parameters_binding (),
+        imb));
+
+    st->execute ();
+
+    shared_ptr< odb::polymorphic_object_result_impl<object_type> > r (
+      new (shared) mssql::polymorphic_object_result_impl<object_type> (
+        q, st, sts, 0));
+
+    return result<object_type> (r);
+  }
+
+  unsigned long long access::object_traits_impl< ::User, id_mssql >::
+  erase_query (database&, const query_base_type& q)
+  {
+    using namespace mssql;
+
+    mssql::connection& conn (
+      mssql::transaction::current ().connection ());
+
+    std::string text (erase_query_statement);
+    if (!q.empty ())
+    {
+      text += ' ';
+      text += q.clause ();
+    }
+
+    q.init_parameters ();
+    delete_statement st (
+      conn,
+      text,
+      q.parameters_binding ());
+
+    return st.execute ();
   }
 }
 
