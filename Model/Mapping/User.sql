@@ -34,5 +34,5 @@ GO
 ALTER TABLE [User]
   ADD CONSTRAINT [User_credentials_fk]
     FOREIGN KEY ([credentials])
-    REFERENCES [Credentials] ([id]);
+    REFERENCES [Credentials] ([id])
 GO

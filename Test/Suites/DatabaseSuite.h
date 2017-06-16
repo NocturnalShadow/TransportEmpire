@@ -4,6 +4,9 @@
 #include "Database/Database.h"
 #include "Database/EntityManager.h"
 
+#include "Utility.h"
+
+#include <QString>
 
 class DatabaseSuite : public QTestSuite
 {
@@ -15,6 +18,15 @@ private:
 public:
     DatabaseSuite();
 
+private:
+void DatabaseSuite::clearAllTables();
+
 private slots:
-    void entityManagerTest();
+    void initTestCase();
+    void entityPersistLoadTest();
+    void entityQueryTest();
+//    TODO:
+//    void entityUpdateTest();
+//    void entityEraseTest();
+//    void cleanupTestCase();
 };

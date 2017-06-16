@@ -8,6 +8,7 @@
 #include <odb/mssql/database.hxx>
 #include <odb/query.hxx>
 #include <odb/core.hxx>
+#include <odb/session.hxx>
 
 #include <type_traits>
 #include "function_traits.h"
@@ -25,9 +26,24 @@ Pointer<T> EntityManager::load(unsigned int id)
 template<class T>
 QVector<Pointer<T>> EntityManager::load(const Query<T>& _query)
 {
-    return transactive([] () {
-        odb::result<T> queryResult{ db->query<T>(_query) };
-        return QVector<Pointer<T>>{ queryResult.begin(), queryResult.end() };
+    return transactive([&] () {
+        odb::result<T> queryResult{ db->query<T>(_query, true) };
+//        Caching the result                          here ^
+        QVector<Pointer<T>> loadResult;
+        try {
+            if(!odb::session::has_current()) {
+                throw std::runtime_error("Session is not enabled.");
+            }
+            loadResult.reserve(queryResult.size());  // Result is not cached. Why???
+        } catch (std::exception& e) {
+             qStdOut() << "Exception: " << e.what() << endl;
+        }
+
+        for(auto iter = queryResult.begin(); iter != queryResult.end(); ++iter) {
+            loadResult.append(iter.load());
+        }
+
+        return std::move(loadResult);
     });
 }
 
@@ -38,13 +54,17 @@ LazyPointer<T> EntityManager::loadLater(unsigned int id)
 }
 
 template<class T>
-QVector<LazyPointer<T>> EntityManager::loadLater(const Query<T> &_query)
+QVector<LazyPointer<T>> EntityManager::loadLater(const Query<T>& _query)
 {
-    return transactive([] () {
+    return transactive([&] () {
         odb::result<T> queryResult{ db->query<T>(_query) };
 
         QVector<LazyPointer<T>> loadResult;
-        loadResult.reserve(queryResult.size());
+        try {
+            loadResult.reserve(queryResult.size());
+        } catch (std::exception& e) {
+            qStdOut() << "Exception: " << e.what() << endl;
+        }
 
         for(auto iter = queryResult.begin(); iter != queryResult.end(); ++iter) {
             loadResult.append(LazyPointer<T>{ db, iter.id()});
@@ -60,6 +80,16 @@ void EntityManager::erase(const Query<T>& _query)
     transactive([&] () {
         db->erase_query<T>(_query);
     });
+}
+
+template<typename T>
+void EntityManager::clearTable()
+{
+        auto table =
+                QString{ typeid(T).name() }
+                .remove("class")
+                .remove(" ");
+        erase<Entity>(Query<Entity>{ "[typeid] = " + Query<Entity>::_ref(table) });
 }
 
 template<class Action>

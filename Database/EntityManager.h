@@ -4,6 +4,7 @@
 #include <odb/mssql/database.hxx>
 #include <odb/query.hxx>
 #include <odb/core.hxx>
+#include <odb/session.hxx>
 
 #include <QObject>
 #include <QVector>
@@ -63,6 +64,9 @@ public:
 
     template<class T>
     void erase(const Query<T>& _query);
+
+    template<typename T>
+    void clearTable();
 
     template<class Action>
     auto transactive(Action action);
