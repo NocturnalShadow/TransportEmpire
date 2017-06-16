@@ -21,10 +21,11 @@ public:
 private:
 void DatabaseSuite::clearAllTables();
 
+// Care about test order!
 private slots:
-    void initTestCase();
-    void entityPersistLoadTest();
-    void entityQueryTest();
+void initTestCase();
+void entityPersistLoadTest();
+void entityQueryTest();
 //    TODO:
 //    void entityUpdateTest();
 //    void entityEraseTest();

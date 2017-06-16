@@ -100,7 +100,7 @@ namespace odb
     load (const typename object_traits<T>::id_type& id, T& object);
 
     // Load (or reload, if it is already loaded) a section of an object.
-    
+    //
     template <typename T>
     void
     load (T& object, section&);

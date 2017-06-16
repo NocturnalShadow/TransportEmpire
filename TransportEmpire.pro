@@ -27,6 +27,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 HEADERS += \
     Database/Database.h                     \
     Database/Pointer.h                      \
+    Database/Transaction.h                  \
     Database/Mapping.h                      \
     Database/Entity.h                       \
     Database/Entity-map.h                   \
@@ -53,8 +54,7 @@ HEADERS += \
     Utility.h                               \
     Role.h                                  \
     function_traits.h                       \
-    TransportEmpireApp.h \
-    Database/Transaction.h
+    TransportEmpireApp.h
 
 SOURCES += \
     Database/Database.cpp                   \
@@ -99,7 +99,7 @@ LIBS += -L"$$_PRO_FILE_PWD_/Libraries/ODB/libodb-qt/lib64/"
 CONFIG(debug, debug|release) {
     LIBS += -lodb-d
     LIBS += -lodb-mssql-d
-    LIBS += -lodb-qt
+    LIBS += -lodb-qt-d
 }
 CONFIG(release, debug|release) {
     LIBS += -lodb

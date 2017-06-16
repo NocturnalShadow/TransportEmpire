@@ -20,8 +20,8 @@ int main(int argc, char* argv[])
 
 #ifdef QT_DEBUG
     // Runs all unit tests instantiated as QTestSuite
-#endif
     QTestSuite::RunAllTests(argc, argv);
+#endif
 
     return app.exec();
 }

@@ -114,19 +114,19 @@ namespace odb
       return load_<T, id_mssql> (id);
     }
 
-//    template <typename T>
-//    inline void database::
-//    load (const typename object_traits<T>::id_type& id, T& obj)
-//    {
-//      return load_<T, id_mssql> (id, obj);
-//    }
+    template <typename T>
+    inline void database::
+    load (const typename object_traits<T>::id_type& id, T& obj)
+    {
+      return load_<T, id_mssql> (id, obj);
+    }
 
-//    template <typename T>
-//    inline void database::
-//    load (T& obj, section& s)
-//    {
-//      return load_<T, id_mssql> (obj, s);
-//    }
+    template <typename T>
+    inline void database::
+    load (T& obj, section& s)
+    {
+      return load_<T, id_mssql> (obj, s);
+    }
 
     template <typename T>
     inline typename object_traits<T>::pointer_type database::

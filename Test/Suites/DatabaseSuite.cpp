@@ -60,10 +60,10 @@ void DatabaseSuite::entityQueryTest()
 
     QCOMPARE(drivers.size(), 2);
 
-    qSort(drivers.begin(), drivers.end(),
-    [] (auto first, auto second) {
-        return first->getFirstName() < second->getFirstName();
-    });
+//    qSort(drivers.begin(), drivers.end(),
+//    [] (auto first, auto second) {
+//        return first->getFirstName() < second->getFirstName();
+//    });
 
     QCOMPARE(drivers[0]->getFirstName(), QString{ "Driver 1" });
     QCOMPARE(drivers[1]->getFirstName(), QString{ "Driver 2" });

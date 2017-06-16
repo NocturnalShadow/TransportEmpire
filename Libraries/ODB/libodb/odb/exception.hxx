@@ -2,10 +2,10 @@
 // copyright : Copyright (c) 2009-2015 Code Synthesis Tools CC
 // license   : GNU GPL v2; see accompanying LICENSE file
 
-#pragma warning (disable:4275)
-
 #ifndef ODB_EXCEPTION_HXX
 #define ODB_EXCEPTION_HXX
+
+#pragma warning( disable : 4275 )
 
 #include <odb/pre.hxx>
 
