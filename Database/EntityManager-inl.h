@@ -27,18 +27,9 @@ template<class T>
 QVector<Pointer<T>> EntityManager::load(const Query<T>& _query)
 {
     return transactive([&] () {
-        odb::result<T> queryResult{ db->query<T>(_query, true) };
-//        Caching the result                          here ^
-        QVector<Pointer<T>> loadResult;
-        try {
-            if(!odb::session::has_current()) {
-                throw std::runtime_error("Session is not enabled.");
-            }
-            loadResult.reserve(queryResult.size());  // Result is not cached. Why???
-        } catch (std::exception& e) {
-             qStdOut() << "Exception: " << e.what() << endl;
-        }
+        odb::result<T> queryResult{ db->query<T>(_query) };
 
+        QVector<Pointer<T>> loadResult;
         for(auto iter = queryResult.begin(); iter != queryResult.end(); ++iter) {
             loadResult.append(iter.load());
         }
@@ -60,12 +51,6 @@ QVector<LazyPointer<T>> EntityManager::loadLater(const Query<T>& _query)
         odb::result<T> queryResult{ db->query<T>(_query) };
 
         QVector<LazyPointer<T>> loadResult;
-        try {
-            loadResult.reserve(queryResult.size());
-        } catch (std::exception& e) {
-            qStdOut() << "Exception: " << e.what() << endl;
-        }
-
         for(auto iter = queryResult.begin(); iter != queryResult.end(); ++iter) {
             loadResult.append(LazyPointer<T>{ db, iter.id()});
         }
