@@ -27,6 +27,13 @@ public:
     QString getLastName()   const { return lastName;    }
     auto getCredentials()   const { return credentials; }
 
+    void setFirstName(QString _firstName) {
+        firstName = _firstName;
+    }
+    void setLastName(QString _lastName) {
+        lastName = _lastName;
+    }
+
 public:
     void Debug() const
     {

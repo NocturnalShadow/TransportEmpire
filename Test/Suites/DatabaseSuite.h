@@ -4,9 +4,7 @@
 #include "Database/Database.h"
 #include "Database/EntityManager.h"
 
-#include "Utility.h"
-
-#include <QString>
+#include "Model/User.h"
 
 class DatabaseSuite : public QTestSuite
 {
@@ -15,19 +13,24 @@ private:
     db::Database database;
     db::EntityManager* manager;
 
+    Pointer<User> admin;
+    Pointer<Credentials> adminCredentials;
+
 public:
     DatabaseSuite();
 
-private:
-void DatabaseSuite::clearAllTables();
+private slots:
+    void initTestCase();
+    void init();
+    void cleanup();
 
 // Care about test order!
 private slots:
-void initTestCase();
-void entityPersistLoadTest();
-void entityQueryTest();
-//    TODO:
-//    void entityUpdateTest();
-//    void entityEraseTest();
-//    void cleanupTestCase();
+    void entityPersistLoadTest();
+    void entityQueryTest();
+    void entityQueryOneTest();
+    void entityQueryLaterTest();
+    void entityUpdateTest();
+    void entityEraseTest();
+    void transactionTest();
 };

@@ -54,19 +54,37 @@ public:
     Pointer<T> load(unsigned int id);
 
     template<class T>
-    QVector<Pointer<T>> load(const Query<T>& _query);
+    void reload(Pointer<T> entity);
+
+    template<class T>
+    Pointer<T> queryOne(const Query<T>& _query);
+
+    template<class T>
+    QVector<Pointer<T>> query();
+
+    template<class T>
+    QVector<Pointer<T>> query(const Query<T>& _query);
 
     template<class T>
     LazyPointer<T> loadLater(unsigned int id);
 
     template<class T>
-    QVector<LazyPointer<T>> loadLater(const Query<T>& _query);
+    LazyPointer<T> queryOneLater(const Query<T>& _query);
+
+    template<class T>
+    QVector<LazyPointer<T>> queryLater();
+
+    template<class T>
+    QVector<LazyPointer<T>> queryLater(const Query<T>& _query);
+
+    template<class T>
+    void erase();                       // does not clear up Entity table
 
     template<class T>
     void erase(const Query<T>& _query);
 
     template<typename T>
-    void clearTable();
+    void clearTable();                  // unsafe
 
     template<class Action>
     auto transactive(Action action);

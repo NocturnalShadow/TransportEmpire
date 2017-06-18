@@ -24,12 +24,45 @@ Pointer<T> EntityManager::load(unsigned int id)
 }
 
 template<class T>
-QVector<Pointer<T>> EntityManager::load(const Query<T>& _query)
+void EntityManager::reload(Pointer<T> entity)
+{
+    transactive([&] () {
+        db->reload(entity);
+    });
+}
+
+template<class T>
+Pointer<T> EntityManager::queryOne(const Query<T>& _query)
 {
     return transactive([&] () {
-        odb::result<T> queryResult{ db->query<T>(_query) };
+        return db->query_one<T>(_query);
+    });
+}
 
+template<class T>
+QVector<Pointer<T>> EntityManager::query()
+{
+    return transactive([&] ()
+    {
+        odb::result<T>      queryResult = db->query<T>(false);
         QVector<Pointer<T>> loadResult;
+
+        for(auto iter = queryResult.begin(); iter != queryResult.end(); ++iter) {
+            loadResult.append(iter.load());
+        }
+
+        return std::move(loadResult);
+    });
+}
+
+template<class T>
+QVector<Pointer<T>> EntityManager::query(const Query<T>& _query)
+{
+    return transactive([&] ()
+    {
+        odb::result<T>      queryResult = db->query<T>(_query, false) ;
+        QVector<Pointer<T>> loadResult;
+
         for(auto iter = queryResult.begin(); iter != queryResult.end(); ++iter) {
             loadResult.append(iter.load());
         }
@@ -41,21 +74,60 @@ QVector<Pointer<T>> EntityManager::load(const Query<T>& _query)
 template<class T>
 LazyPointer<T> EntityManager::loadLater(unsigned int id)
 {
-    return LazyPointer<T>{ db, id };
+    return LazyPointer<T>{ *db, id };
 }
 
 template<class T>
-QVector<LazyPointer<T>> EntityManager::loadLater(const Query<T>& _query)
+LazyPointer<T> EntityManager::queryOneLater(const Query<T>& _query)
 {
-    return transactive([&] () {
-        odb::result<T> queryResult{ db->query<T>(_query) };
+    return transactive([&] ()
+    {
+        odb::result<T> queryResult = db->query<T>(_query, false);
+        return LazyPointer<T>{ *db,
+                    queryResult.begin() != queryResult.end() ?
+                        queryResult.begin().id() : nullptr
+        };
+    });
+}
 
+
+template<class T>
+QVector<LazyPointer<T>> EntityManager::queryLater()
+{
+        return transactive([&] ()
+        {
+            odb::result<T>          queryResult = db->query<T>(false);
+            QVector<LazyPointer<T>> loadResult;
+
+            for(auto iter = queryResult.begin(); iter != queryResult.end(); ++iter) {
+                loadResult.append(LazyPointer<T>{ *db, iter.id()});
+            }
+
+            return std::move(loadResult);
+        });
+}
+
+template<class T>
+QVector<LazyPointer<T>> EntityManager::queryLater(const Query<T>& _query)
+{
+    return transactive([&] ()
+    {
+        odb::result<T>          queryResult = db->query<T>(_query, false);
         QVector<LazyPointer<T>> loadResult;
+
         for(auto iter = queryResult.begin(); iter != queryResult.end(); ++iter) {
-            loadResult.append(LazyPointer<T>{ db, iter.id()});
+            loadResult.append(LazyPointer<T>{ *db, iter.id()});
         }
 
         return std::move(loadResult);
+    });
+}
+
+template<class T>
+void EntityManager::erase()
+{
+    transactive([&] () {
+        db->erase_query<T>();
     });
 }
 

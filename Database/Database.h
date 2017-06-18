@@ -13,6 +13,7 @@ class Database
 private:
     std::string name;
     std::string instance;
+public:
     std::unique_ptr<odb::database> db;
 
 public:
