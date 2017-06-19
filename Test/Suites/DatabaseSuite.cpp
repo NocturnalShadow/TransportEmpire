@@ -10,8 +10,6 @@ DatabaseSuite::DatabaseSuite()
     manager->startSession();
 }
 
-// Tests
-
 void DatabaseSuite::initTestCase()
 {
     manager->erase<db::Entity>();
@@ -82,36 +80,62 @@ void DatabaseSuite::entityUpdateTest()
 
 void DatabaseSuite::entityEraseTest()
 {
+    // erase with transaction rollback
+    auto query{ db::Query<User>::credentials->role == Role::DRIVER };
     {
-        auto driver = manager->queryOne<User>(db::Query<User>::firstName == "Driver 1");
+        db::Transaction transaction{ manager };
+        manager->erase<User>(query);
+    } // <- rolling back the transactions
+    auto drivers = manager->query<User>(query);
+    QCOMPARE(drivers.size(), 2);
+
+    // erase one
+    {
+        auto query{ db::Query<User>::firstName == "Driver 1" };
+        auto driver = manager->queryOne<User>(query);
         driver->erase();
+        driver = manager->queryOne<User>(query);
+        QCOMPARE(driver.data(), nullptr);
     }
 
-    auto driver = manager->queryOne<User>(db::Query<User>::firstName == "Driver 1");
-    QCOMPARE(driver.data(), nullptr);
+    // query erase
+    {
+        auto query{ db::Query<User>::credentials->role == Role::DRIVER };
+        manager->erase<User>(query);
+        auto drivers = manager->query<User>(query);
+        QCOMPARE(drivers.size(), 0);
+    }
 }
 
 void DatabaseSuite::transactionTest()
 {
     auto driver = manager->queryOne<User>(db::Query<User>::firstName == "Driver 1");
+
+    // manual transaction rollback
     {
-        auto transaction = manager->transaction();
+        db::Transaction transaction{ manager };
         driver->setLastName("Erickson");
         driver->update();
+        transaction.rollback();
+        QCOMPARE(driver->getLastName(), QString{ "<Unknown>" });
     }
 
-    manager->reload(driver);
-//    driver = manager->queryOne<User>(db::Query<User>::firstName == "Driver 1");
+    // automatic transaction rollback
+    {
+        db::Transaction transaction{ manager };
+        driver->setLastName("Erickson");
+        driver->update();
+    } // <- rolling back the transactions
     QCOMPARE(driver->getLastName(), QString{ "<Unknown>" });
 
+    // transaction commit
     {
-        auto transaction = manager->transaction();
+        db::Transaction transaction{ manager };
         auto driver = manager->queryOne<User>(db::Query<User>::firstName == "Driver 1");
         driver->setLastName("Erickson");
         driver->update();
         transaction.commit();
     }
-
     auto driverClone = manager->queryOne<User>(db::Query<User>::firstName == "Driver 1");
     QCOMPARE(driverClone->getLastName(), QString{ "Erickson" });
 }
@@ -122,7 +146,7 @@ void DatabaseSuite::init()
     admin                       = make<User>("Adminka", "<Unknown>", adminCredentials);
 
     auto driverCredentials1     = make<Credentials>(Role::DRIVER, "LOGIN2", "PASSWORD2");
-    auto drivercredentials2     = make<Credentials>(Role::DRIVER, "LOGIN3", "PASSWORD4");
+    auto drivercredentials2     = make<Credentials>(Role::DRIVER, "LOGIN3", "PASSWORD3");
     auto driver1                = make<User>("Driver 1", "<Unknown>", driverCredentials1);
     auto driver2                = make<User>("Driver 2", "<Unknown>", drivercredentials2);
 
@@ -136,8 +160,8 @@ void DatabaseSuite::init()
 
 void DatabaseSuite::cleanup()
 {
-    manager->clearTable<User>();
-    manager->clearTable<Credentials>();
+    manager->erase<User>();
+    manager->erase<Credentials>();
 }
 
 

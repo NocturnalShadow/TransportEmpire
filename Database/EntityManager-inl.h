@@ -13,6 +13,8 @@
 #include <type_traits>
 #include "function_traits.h"
 
+#include <QVector>
+
 namespace db {
 
 template<class T>
@@ -96,9 +98,9 @@ QVector<LazyPointer<T>> EntityManager::queryLater()
 {
         return transactive([&] ()
         {
-            odb::result<T>          queryResult = db->query<T>(false);
-            QVector<LazyPointer<T>> loadResult;
+            odb::result<T> queryResult = db->query<T>(false);
 
+            QVector<LazyPointer<T>> loadResult;
             for(auto iter = queryResult.begin(); iter != queryResult.end(); ++iter) {
                 loadResult.append(LazyPointer<T>{ *db, iter.id()});
             }
@@ -112,9 +114,9 @@ QVector<LazyPointer<T>> EntityManager::queryLater(const Query<T>& _query)
 {
     return transactive([&] ()
     {
-        odb::result<T>          queryResult = db->query<T>(_query, false);
-        QVector<LazyPointer<T>> loadResult;
+        odb::result<T> queryResult = db->query<T>(_query, false);
 
+        QVector<LazyPointer<T>> loadResult;
         for(auto iter = queryResult.begin(); iter != queryResult.end(); ++iter) {
             loadResult.append(LazyPointer<T>{ *db, iter.id()});
         }
@@ -127,7 +129,10 @@ template<class T>
 void EntityManager::erase()
 {
     transactive([&] () {
-        db->erase_query<T>();
+        auto ids = queryIds<T>();
+        if(!ids.empty()) {
+            db->erase_query<Entity>(Query<Entity>::id.in_range(ids.begin(), ids.end()));
+        }
     });
 }
 
@@ -135,18 +140,26 @@ template<class T>
 void EntityManager::erase(const Query<T>& _query)
 {
     transactive([&] () {
-        db->erase_query<T>(_query);
+        auto ids = queryIds<T>(&_query);
+        if(!ids.empty()) {
+            db->erase_query<Entity>(Query<Entity>::id.in_range(ids.begin(), ids.end()));
+        }
     });
 }
 
-template<typename T>
-void EntityManager::clearTable()
+template<class T>
+QVector<unsigned int> EntityManager::queryIds(const Query<T>* _query)
 {
-        auto table =
-                QString{ typeid(T).name() }
-                .remove("class")
-                .remove(" ");
-        erase<Entity>(Query<Entity>{ "[typeid] = " + Query<Entity>::_ref(table) });
+    auto entities = _query ?
+        db->query<T>(*_query, false) :
+        db->query<T>(false);
+
+    QVector<unsigned int> ids;
+    for(auto iter = entities.begin(); iter != entities.end(); ++iter) {
+        ids.append(iter.id());
+    }
+
+    return std::move(ids);
 }
 
 template<class Action>
@@ -155,9 +168,9 @@ void EntityManager::_transactive(Action action, std::true_type)
     if(Transaction::active()) {
         action();
     } else {
-        auto t = transaction();
+        Transaction transaction{ this };
         action();
-        t.commit();
+        transaction.commit();
     }
 }
 
@@ -167,9 +180,9 @@ auto EntityManager::_transactive(Action action, std::false_type)
     if(Transaction::active()) {
         return action();
     } else {
-        auto t = transaction();
+        Transaction transaction{ this };
         auto result = action();
-        t.commit();
+        transaction.commit();
         return result;
     }
 }
@@ -179,5 +192,16 @@ auto EntityManager::transactive(Action action)
 {
     return _transactive(action, std::is_void<return_type<Action>>::type());
 }
+
+// fast, but comiler dependant
+//template<typename T>
+//void EntityManager::clearTable()
+//{
+//        auto table =
+//                QString{ typeid(T).name() }
+//                .remove("class")
+//                .remove(" ");
+//        erase<Entity>(Query<Entity>{ "[typeid] = " + Query<Entity>::_ref(table) });
+//}
 
 } // namespace db

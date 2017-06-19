@@ -8,13 +8,11 @@
 
 #include <QObject>
 #include <QVector>
-#include <QScopedPointer>
 
 #include <type_traits>
 
 #include "Database/Pointer.h"
 #include "Database/Entity.h"
-#include "Database/Transaction.h"
 
 namespace db
 {
@@ -25,6 +23,7 @@ using Query = odb::query<T>;
 class EntityManager : public QObject
 {
     Q_OBJECT
+    friend class Transaction;
 private:
     odb::database* db = nullptr;
     odb::session session;
@@ -36,8 +35,6 @@ public:
 public:
     void startSession();
 
-    Transaction transaction();
-
     void persist(Entity& entity);
     void persist(Pointer<Entity> entity);
 
@@ -48,6 +45,9 @@ private slots:
     void onUpdateRequested();
     void onReloadRequested();
     void onEraseRequested();
+
+signals:
+    void entityUpdated(Entity* entity);
 
 public:
     template<class T>
@@ -78,13 +78,13 @@ public:
     QVector<LazyPointer<T>> queryLater(const Query<T>& _query);
 
     template<class T>
-    void erase();                       // does not clear up Entity table
+    void erase();
 
     template<class T>
     void erase(const Query<T>& _query);
 
-    template<typename T>
-    void clearTable();                  // unsafe
+    template<class T>
+    QVector<unsigned int> queryIds(const Query<T>* _query = nullptr);
 
     template<class Action>
     auto transactive(Action action);

@@ -4,13 +4,6 @@
 
 #include "Test/TestSuite.h"
 
-#include "Database/Database.h"
-#include "Database/EntityManager.h"
-
-#include "Model/User.h"
-
-#include "Utility.h"
-
 
 int main(int argc, char* argv[])
 {

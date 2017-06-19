@@ -19,12 +19,14 @@ public:
     virtual ~Entity() = default;
 
 public:
-    void update()   { emit updateRequested(); }
-    void erase()    { emit eraseRequested();  }
+    void update()   { emit updateRequested();   }
+    void erase()    { emit eraseRequested();    }
+    void reload()   { emit reloadRequested();      }
 
 signals:
     void updateRequested();
     void eraseRequested();
+    void reloadRequested();
 
 public:
     unsigned int getId() const { return id; }

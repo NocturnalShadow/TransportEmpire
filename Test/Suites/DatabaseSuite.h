@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Test/TestSuite.h"
+
 #include "Database/Database.h"
 #include "Database/EntityManager.h"
 
@@ -24,7 +25,6 @@ private slots:
     void init();
     void cleanup();
 
-// Care about test order!
 private slots:
     void entityPersistLoadTest();
     void entityQueryTest();
