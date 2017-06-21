@@ -26,6 +26,7 @@ public:
 public:
     QString getLogin()  const { return login;   }
     Role getRole()      const { return role;    }
+    QString getPassword() const {return password;}
 
     void setRole(Role _role) { role = _role; }
 

@@ -4,12 +4,14 @@
 #include "Server/ControllerSuite.h"
 #include "Server/Controllers/RouteController.h"
 #include "Server/Controllers/UserController.h"
+#include "Model/Credentials.h"
+#include "Model/User.h"
 
 #include "Utility.h"
 
 TransportEmpireApp::TransportEmpireApp(QObject* parent)
     : QObject{ parent },
-      database{ "TransportEmpireDB" }
+      database{ "TransportEmpireDB", "SQLEXPRESS" } // sqlexpress for Karolina's pc
 {
         database.connect();
 
@@ -25,6 +27,34 @@ TransportEmpireApp::TransportEmpireApp(QObject* parent)
                 .port(8080)
                 .controllerSuite(suite)
                 .makeUnique();
+}
 
-        server->launchAsync();
+void TransportEmpireApp::launch()
+{
+    server->launchAsync();
+}
+
+void TransportEmpireApp::init()
+{
+    db::EntityManager* manager = database.createManagerInstance();
+    manager->startSession();
+    try{
+        manager->erase<User>();
+        manager->erase<Credentials>();
+    }
+    catch(std::exception& e){
+        qStdOut() << e.what() <<endl;
+    }
+    Pointer<Credentials> adminCredentials = make<Credentials>(Role::ADMIN, "LOGIN", "PASSWORD");
+    Pointer<User> admin = make<User>("Admin", "Admin", adminCredentials);
+    try{
+    manager->persist(adminCredentials);}
+    catch(std::exception& e){
+        qStdOut() << e.what() <<endl;
+    }
+    try{
+        manager->persist(admin);}
+    catch(std::exception& e){
+        qStdOut() << e.what() <<endl;
+    }
 }
