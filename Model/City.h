@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Location.h"
+#include "Database/Entity.h"
 
 #include <QVector>
 #include <QString>
@@ -9,8 +10,9 @@
 
 #include <QDebug>
 
-class City
+class City:public db::Entity
 {
+    PERSISTENT
 private:
     QString placeID;
     QString formatedAddress;

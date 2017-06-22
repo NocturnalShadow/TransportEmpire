@@ -3,7 +3,7 @@
 City::City(const QJsonObject& city)
     : placeID           { city["place_id"].toString() },
       formatedAddress   { city["formatted_address"].toString() },
-      location          { city["loction"].toObject() }
+      location          { city["position"].toObject() }
 {
 }
 
@@ -19,7 +19,7 @@ QJsonObject City::toJsonObject() const
     QJsonObject city;
     city["place_id"]            = placeID;
     city["formatted_address"]   = formatedAddress;
-    city["location"]            = location.toJsonObject();
+    city["position"]            = location.toJsonObject();
     return city;
 }
 
