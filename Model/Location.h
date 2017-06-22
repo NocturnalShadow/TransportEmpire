@@ -1,10 +1,11 @@
 #pragma once
 
-#include <QJsonObject>
+#include "Database/Entity.h"
 
-#include <QDebug>
+#include <QtCore/QJsonObject>
+#include <QtCore/QDebug>
 
-struct Location
+class Location
 {
 public:
     double lat;
@@ -12,7 +13,6 @@ public:
 
 public:
     Location() = default;
-    Location(const Location &) = default;
     Location(double _lat, double _lng)
         : lat{ _lat }, lng{ _lng }
     {
@@ -41,3 +41,5 @@ public:
                 << ")";
     }
 };
+
+#include "Location-map.h"

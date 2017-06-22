@@ -1,16 +1,16 @@
 #pragma once
 
-#include "Location.h"
 #include "Database/Entity.h"
 
-#include <QVector>
-#include <QString>
-#include <QJsonArray>
-#include <QJsonObject>
+#include "Location.h"
 
-#include <QDebug>
+#include <QtCore/QVector>
+#include <QtCore/QString>
+#include <QtCore/QJsonArray>
+#include <QtCore/QJsonObject>
+#include <QtCore/QDebug>
 
-class City:public db::Entity
+class City: public db::Entity
 {
     PERSISTENT
 private:
@@ -20,8 +20,20 @@ private:
 
 public:
     City() = default;
-    City(const QJsonObject& city);
-    City(const QString& placeID, const QString& _formatedAddress, const Location& _location);
+
+    City(const QJsonObject& city)
+        : placeID           { city["place_id"].toString() },
+        formatedAddress   { city["formatted_address"].toString() },
+        location          { city["loction"].toObject() }
+    {
+    }
+
+    City(const QString& _placeID, const QString& _formatedAddress, const Location& _location)
+        : placeID           { _placeID },
+        formatedAddress   { _formatedAddress },
+        location          { _location }
+    {
+    }
 
 public:
     const QString&  getID()         const { return placeID; }
@@ -29,7 +41,14 @@ public:
     const Location& getLocation()   const { return location; }
 
 public:
-    QJsonObject toJsonObject() const;
+    QJsonObject toJsonObject() const
+    {
+        QJsonObject city;
+        city["place_id"]            = placeID;
+        city["formatted_address"]   = formatedAddress;
+        city["location"]            = location.toJsonObject();
+        return city;
+    }
 
 public:
     void Debug() const
@@ -41,3 +60,5 @@ public:
                                         << location.lng << " lng)";
     }
 };
+
+#include "City-map.h"

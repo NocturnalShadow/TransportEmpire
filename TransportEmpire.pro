@@ -59,7 +59,10 @@ HEADERS += \
     Role.h \
     Model/City.h \
     Model/Location.h \
-    Model/Route.h
+    Model/Route.h \
+    Model/City-map.h \
+    Model/Location-map.h \
+    Model/Route-map.h
 
 SOURCES += \
     Database/Database.cpp                   \
@@ -84,7 +87,10 @@ SOURCES += \
     Application/TransportEmpire.cpp         \
     main.cpp \
     Model/City.cpp \
-    Model/Route.cpp
+    Model/Route.cpp \
+    Model/Mapping/City-map.cpp \
+    Model/Mapping/Location-map.cpp \
+    Model/Mapping/route-map.cpp
 
 # Select the database we are going to use.
 #
