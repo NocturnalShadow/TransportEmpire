@@ -49,7 +49,13 @@ void TransportEmpire::onLaunchButtonClicked()
     display.setStatus("Status: Launching...");
 
     QFuture<void> launch = QtConcurrent::run([=] () {
-        test(login, password);
+        try {
+            test(login, password);
+        } catch (std::exception& e) {
+            qStdOut() << "Exception: " << e.what() << endl;
+        } catch(...) {
+
+        }
         core.prepare(login, password);
     });
     core.launch();

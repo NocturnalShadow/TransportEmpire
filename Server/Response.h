@@ -44,7 +44,8 @@ enum Response::Code {
     BadRequest		= 400,
     Unauthorized	= 401,
     Forbidden		= 403,
-    NotFound		= 404
+    NotFound		= 404,
+    UnknownError    = 600
 };
 
 } // srv namespace

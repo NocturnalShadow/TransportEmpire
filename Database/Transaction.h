@@ -26,7 +26,7 @@ public:
 
 public:
     Transaction(EntityManager* manager)
-        : transaction{ new odb::transaction(manager->db->begin()) }
+        : transaction{ new odb::transaction{ manager->db->begin() } }
     {
         connect(manager, &EntityManager::entityUpdated,
                 this, &Transaction::onEntityUpdated,

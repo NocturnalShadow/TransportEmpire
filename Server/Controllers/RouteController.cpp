@@ -79,21 +79,17 @@ Response RouteController::getRouteList(const Request& request, db::EntityManager
     qStdOut() << "GET_ROUTE_LIST command. " << threadId() << endl;
 
     Response response(request);
-
     auto& responseData  = response.getDataRef();
-    auto lazyRoutes     = manager->queryLater<Route>();
+    auto routes = manager->query<Route>();
 
     QJsonArray dataRoutes;
-    if(!lazyRoutes.isEmpty())
+    if(!routes.isEmpty())
     {
-         for(auto& route : lazyRoutes)
-         {
-            route.load();
+         for(auto& route : routes) {
             dataRoutes.push_back(QJsonValue(route->toJsonObject()));
          }
          responseData["routes"] = dataRoutes;
-    }
-    else{
+    } else {
         response.setCode(Response::Code::NotFound);
     }
 

@@ -50,7 +50,7 @@
      <item>
       <widget class="QLineEdit" name="loginEdit">
        <property name="text">
-        <string>Master</string>
+        <string/>
        </property>
       </widget>
      </item>

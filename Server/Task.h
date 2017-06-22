@@ -5,6 +5,8 @@
 
 #include "Database/EntityManager.h"
 
+#include "Utility.h"
+
 #include <QObject>
 #include <QRunnable>
 #include <QScopedPointer>
@@ -34,7 +36,14 @@ public:
     void run() override
     {
         manager->startSession();
-        emit responseReady(handler(*request, manager));
+        Response response;
+        try {
+            response = handler(*request, manager);
+        } catch(std::exception& e) {
+            qStdOut() << "Exception: " << e.what() << endl;
+            response.setCode(Response::Code::UnknownError);
+        }
+        emit responseReady(response);
     }
 
 signals:

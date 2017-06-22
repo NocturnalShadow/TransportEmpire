@@ -50,11 +50,9 @@ CREATE TABLE [Route] (
   [id] INT NOT NULL PRIMARY KEY,
   [info] INT NULL,
   [polyline] VARCHAR(512) NULL
-  /*
   CONSTRAINT [Route_info_fk]
     FOREIGN KEY ([info])
-    REFERENCES [RouteInfo] ([id])
-  */);
+    REFERENCES [RouteInfo] ([id]));
 GO
 
 CREATE TABLE [Route_stops] (
@@ -76,20 +74,22 @@ CREATE INDEX [index_i]
 GO
 
 ALTER TABLE [RouteInfo]
-  ADD CONSTRAINT [RouteInfo_id_fk]
+	ADD CONSTRAINT [RouteInfo_id_fk]
     FOREIGN KEY ([id])
     REFERENCES [Entity] ([id])
     ON DELETE CASCADE
-      /*
-      CONSTRAINT [RouteInfo_origin_fk]
+GO
+  
+ ALTER TABLE [RouteInfo]    
+	ADD CONSTRAINT [RouteInfo_origin_fk]
     FOREIGN KEY ([origin])
     REFERENCES [City] ([id])
-      */
-      /*
-      CONSTRAINT [RouteInfo_destination_fk]
+GO
+
+ ALTER TABLE [RouteInfo]    
+	ADD CONSTRAINT [RouteInfo_destination_fk]
     FOREIGN KEY ([destination])
-    REFERENCES [City] ([id])
-      */;
+    REFERENCES [City] ([id]);
 GO
 
 ALTER TABLE [Route]
@@ -99,10 +99,9 @@ ALTER TABLE [Route]
     ON DELETE CASCADE;
 GO
 
-/*
 ALTER TABLE [Route_stops]
   ADD CONSTRAINT [Route_stops_value_fk]
     FOREIGN KEY ([value])
     REFERENCES [City] ([id])
-*/
+GO
 

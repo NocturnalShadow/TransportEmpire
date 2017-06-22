@@ -11,8 +11,10 @@ Route::Route(const QJsonObject& route)
       stops{ toVector<City>(route["stops"].toArray()) }
 {
     info = make<RouteInfo>(route["info"].toObject());
-    info->origin =  stops.front();
-    info->destination = stops.back();
+    if(!stops.isEmpty()) {
+        info->origin = stops.front();
+        info->destination = stops.back();
+    }
 }
 
 QJsonObject Route::toJsonObject() const
