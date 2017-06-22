@@ -23,17 +23,3 @@ QJsonObject City::toJsonObject() const
     return city;
 }
 
-void City::update(Pointer<City> city){
-    if(placeId != city->placeID){
-        placeId = city->placeID;
-    }
-    if(formatedAddress != city->formatedAddress){
-        formattedAddress = city->formatedAddress;
-    }
-    if(location.lat != city->location.lat){
-        location.lat = city->location.lat;
-    }
-    if(location.lng != city->location.lng){
-        location.lng = city->location.lng;
-    }
-}
