@@ -34,7 +34,7 @@ Response RouteController::editRoute(const Request& request, db::EntityManager* m
     Response response(request);
 
     auto requestData    = request.getData();
-    auto id             = requestData["id"].toString().toUInt();
+    auto id             = (unsigned) requestData["id"].toInt();
     auto route          = manager->load<Route>(id);
 
     if(route.data() == nullptr) {
@@ -52,12 +52,12 @@ Response RouteController::getRoute(const Request& request, db::EntityManager* ma
 
     Response response(request);
 
-    auto& data  = response.getDataRef();
-    auto id     = data["id"].toString().toUInt();
-    auto route  = manager->load<Route>(id);
+    auto& responseData  = response.getDataRef();
+    auto id             = (unsigned) responseData["id"].toInt();
+    auto route          = manager->load<Route>(id);
 
     if(route.data() != nullptr) {
-        data["route"] = route->toJsonObject();
+        responseData["route"] = route->toJsonObject();
     } else{
         response.setCode(Response::Code::NotFound);
     }

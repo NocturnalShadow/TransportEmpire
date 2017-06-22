@@ -37,6 +37,12 @@ HEADERS += \
     Model/Credentials-map.h                 \
     Model/User.h                            \
     Model/User-map.h                        \
+    Model/City.h                            \
+    Model/City-map.h                        \
+    Model/Location.h                        \
+    Model/Location-map.h                    \
+    Model/Route.h                           \
+    Model/Route-map.h                       \
     Server/Server.h                         \
     Server/ServerBuilder.h                  \
     Server/ClientConnection.h               \
@@ -56,10 +62,8 @@ HEADERS += \
     Application/TransportEmpire.h           \
     function_traits.h                       \
     Utility.h                               \
-    Role.h \
-    Model/City.h \
-    Model/Location.h \
-    Model/Route.h
+    Role.h 
+
 
 SOURCES += \
     Database/Database.cpp                   \
@@ -69,6 +73,11 @@ SOURCES += \
     Model/Credentials-map.cpp               \
     Model/User.cpp                          \
     Model/User-map.cpp                      \
+    Model/City.cpp                          \
+    Model/City-map.cpp                      \
+    Model/Route.cpp                         \
+    Model/Route-map.cpp                     \
+    Model/Location-map.cpp                  \
     Server/Server.cpp                       \
     Server/ServerBuilder.cpp                \
     Server/ConnectionManager.cpp            \
@@ -82,9 +91,8 @@ SOURCES += \
     Application/Display.cpp                 \
     Application/Core.cpp                    \
     Application/TransportEmpire.cpp         \
-    main.cpp \
-    Model/City.cpp \
-    Model/Route.cpp
+    main.cpp
+
 
 # Select the database we are going to use.
 #
