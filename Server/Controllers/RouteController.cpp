@@ -6,7 +6,7 @@
 
 namespace srv {
 
-RouteController::RouteController(db::Database* database)
+RouteController::RouteController(db::IDatabase* database)
     : IController{ database }
 {
 }

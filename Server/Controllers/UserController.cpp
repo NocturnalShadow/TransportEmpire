@@ -6,7 +6,7 @@
 
 namespace srv {
 
-UserController::UserController(db::Database* database)
+UserController::UserController(db::IDatabase* database)
     : IController{ database }
 {
 }

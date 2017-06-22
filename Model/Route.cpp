@@ -2,8 +2,8 @@
 #include "Utility.h"
 
 RouteInfo::RouteInfo(const QJsonObject& route)
-    : origin{ City(route["origin"].toObject()) },
-      destination{ City(route["destination"].toObject()) },
+    : origin{ route["origin"].toObject() },
+      destination{ route["destination"].toObject() },
       totalDistance{ route["total_distance"].toDouble() }
 {
 }
@@ -26,7 +26,6 @@ Route::Route(const QJsonObject& route)
 
 QJsonObject Route::toJsonObject() const {
     QJsonObject route;
-    route["id"] = id;
     route["info"] = info.toJsonObject();
     route["polyline"] = polyline;
     route["stops"] = toJsonArray(stops);

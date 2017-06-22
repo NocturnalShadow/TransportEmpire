@@ -21,10 +21,10 @@ protected:
 
 private:
     QThreadPool*    pool = QThreadPool::globalInstance();
-    db::Database*   database;
+    db::IDatabase*  database;
 
 public:
-    IController(db::Database* _database)
+    IController(db::IDatabase* _database)
         : database{ _database }
     {
     }

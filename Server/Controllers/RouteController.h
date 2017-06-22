@@ -4,12 +4,12 @@
 
 namespace srv {
 
-class db::Database;
+class db::IDatabase;
 class db::EntityManager;
 class RouteController : public IController
 {
 public:
-    RouteController(db::Database* database);
+    RouteController(db::IDatabase* database);
 
 private:
     static Response addRoute(const Request& request, db::EntityManager* manager);

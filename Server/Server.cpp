@@ -12,7 +12,8 @@ Server::Server()
     : router{ new Router{ this } },
       connectionManager {
           new ConnectionManager{ name, securityMode, this }
-      }
+      },
+      origin{ QThread::currentThread() }
 {
     connect(connectionManager, &ConnectionManager::newConnection,
             router, &Router::registerConnection);
@@ -36,8 +37,10 @@ void Server::setControllerSuite(ControllerSuite* suite)
 
 void Server::launch()
 {
-    bool launched = connectionManager->open(address, port);
-    if(!launched) {
+    bool success = connectionManager->open(address, port);
+    if(success) {
+        emit launched();
+    } else {
         emit failedToLaunch();
     }
 }
@@ -65,8 +68,8 @@ void Server::terminate()
 void Server::onTerminate()
 {
     connectionManager->close();
-
     emit terminated();
+    this->moveToThread(origin);
 }
 
 } // srv namespace

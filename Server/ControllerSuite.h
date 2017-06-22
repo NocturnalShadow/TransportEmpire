@@ -6,7 +6,7 @@
 #include <QObject>
 
 namespace db {
-    class Database;
+    class IDatabase;
 }
 
 namespace srv {
@@ -15,10 +15,10 @@ class ControllerSuite : public QObject
 {
 private:
     QList<IController*> suite;
-    db::Database* database;
+    db::IDatabase* database;
 
 public:
-    ControllerSuite(db::Database* _database)
+    ControllerSuite(db::IDatabase* _database)
         : database{ _database }
     {
     }

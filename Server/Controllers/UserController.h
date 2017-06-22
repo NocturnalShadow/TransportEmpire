@@ -4,12 +4,12 @@
 
 namespace srv {
 
-class db::Database;
+class db::IDatabase;
 class db::EntityManager;
 class UserController : public IController
 {
 public:
-    UserController(db::Database* database);
+    UserController(db::IDatabase* database);
 
 private:
     static Response login(const Request& request, db::EntityManager* manager);

@@ -36,7 +36,7 @@ bool ConnectionManager::open(QHostAddress address, quint16 port)
 void ConnectionManager::close()
 {
     server.close();
-    qStdOut() << "Stoped listening. " << threadId();
+    qStdOut() << "Stoped listening. " << threadId() << endl;
 }
 
 void ConnectionManager::onClientConnected()

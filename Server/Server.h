@@ -4,6 +4,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QThread>
 #include <QHostAddress>
 #include <QWebSocketServer>
 
@@ -30,6 +31,8 @@ private:
     ConnectionManager* 	connectionManager;
     Router*				router;
 
+    QThread*            origin;
+
 private:
     Server();
 
@@ -52,6 +55,7 @@ private slots:
 
 signals:
     void terminated();
+    void launched();
     void failedToLaunch();
 };
 

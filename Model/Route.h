@@ -29,7 +29,6 @@ public:
 class Route
 {
 private:
-    int id;
     RouteInfo info;
     QString polyline;
     QVector<City> stops;
@@ -44,7 +43,7 @@ public:
     void Debug() const
     {
         qDebug().nospace()
-                << "Route (id: "    << id
+                << "Route (:"
                 << ", distance: "   << info.getDistance()
                 << ", from: "       << stops.first().getAddress()
                 << ", to: "         << stops.last().getAddress()

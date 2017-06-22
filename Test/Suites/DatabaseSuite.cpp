@@ -1,17 +1,22 @@
 #include "Test/Suites/DatabaseSuite.h"
-
+#include "Database/Database.h"
+#include "Database/EntityManager.h"
 #include "Utility.h"
 
 DatabaseSuite::DatabaseSuite()
-    : database{ "TransportEmpireDB" }
 {
-    database.connect();
-    manager = database.createManagerInstance();
-    manager->startSession();
+    database = new db::RemoteDatabase {
+            "TransportEmpireTDB",
+            "sqlexpress2014.cvn90iitbqfj.us-west-2.rds.amazonaws.com",
+            1433
+    };
 }
 
 void DatabaseSuite::initTestCase()
 {
+    database->connect(args[0], args[1]);
+    manager = database->createManagerInstance();
+    manager->startSession();
     manager->erase<db::Entity>();
 }
 

@@ -27,12 +27,11 @@ ALTER TABLE [User]
   ADD CONSTRAINT [User_id_fk]
     FOREIGN KEY ([id])
     REFERENCES [Entity] ([id])
-    ON DELETE CASCADE;
-GO
-
-
-ALTER TABLE [User]
-  ADD CONSTRAINT [User_credentials_fk]
+    ON DELETE CASCADE
+      /*
+      CONSTRAINT [User_credentials_fk]
     FOREIGN KEY ([credentials])
     REFERENCES [Credentials] ([id])
+      */;
 GO
+

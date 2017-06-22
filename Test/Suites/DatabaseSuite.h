@@ -2,16 +2,18 @@
 
 #include "Test/TestSuite.h"
 
-#include "Database/Database.h"
-#include "Database/EntityManager.h"
-
 #include "Model/User.h"
+
+namespace db {
+    class IDatabase;
+    class EntityManager;
+}
 
 class DatabaseSuite : public QTestSuite
 {
     Q_OBJECT
 private:
-    db::Database database;
+    db::IDatabase* database;
     db::EntityManager* manager;
 
     Pointer<User> admin;
@@ -19,6 +21,9 @@ private:
 
 public:
     DatabaseSuite();
+    ~DatabaseSuite() {
+        delete database;
+    }
 
 private slots:
     void initTestCase();

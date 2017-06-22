@@ -1,4 +1,4 @@
-QT += core websockets network concurrent testlib
+QT += core widgets websockets network concurrent testlib
 QT -= gui
 
 CONFIG += c++11
@@ -51,22 +51,24 @@ HEADERS += \
     Server/Controllers/UserController.h     \
     Test/TestSuite.h                        \
     Test/Suites/DatabaseSuite.h             \
-    Utility.h                               \
-    Role.h                                  \
+    Application/Display.h                   \
+    Application/Core.h                      \
+    Application/TransportEmpire.h           \
     function_traits.h                       \
-    TransportEmpireApp.h
+    Utility.h                               \
+    Role.h \
+    Model/City.h \
+    Model/Location.h \
+    Model/Route.h
 
 SOURCES += \
     Database/Database.cpp                   \
     Database/EntityManager.cpp              \
     Database/Entity-map.cpp                 \
-    Database/Mapping/Entity-odb.cpp         \
     Model/Credentials.cpp                   \
-    Model/Mapping/Credentials-odb.cpp       \
+    Model/Credentials-map.cpp               \
     Model/User.cpp                          \
-    Model/Mapping/User-odb.cpp              \
-    Model/City.cpp                          \
-    Model/Route.cpp                         \
+    Model/User-map.cpp                      \
     Server/Server.cpp                       \
     Server/ServerBuilder.cpp                \
     Server/ConnectionManager.cpp            \
@@ -77,8 +79,12 @@ SOURCES += \
     Server/Controllers/RouteController.cpp  \
     Server/Controllers/UserController.cpp   \
     Test/Suites/DatabaseSuite.cpp           \
-    TransportEmpireApp.cpp                  \
-    main.cpp
+    Application/Display.cpp                 \
+    Application/Core.cpp                    \
+    Application/TransportEmpire.cpp         \
+    main.cpp \
+    Model/City.cpp \
+    Model/Route.cpp
 
 # Select the database we are going to use.
 #
@@ -106,5 +112,8 @@ CONFIG(release, debug|release) {
     LIBS += -lodb-mssql
     LIBS += -lodb-qt
 }
+
+FORMS += \
+    Application/display.ui
 
 
