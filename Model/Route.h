@@ -46,6 +46,8 @@ public:
     const Pointer<RouteInfo>& getInfo() const{return info;}
     const QVector<Pointer<City>>& getStops() const{return stops;}
 
+    void update(Pointer<Route>);
+
     void Debug() const
     {
         qDebug().nospace()

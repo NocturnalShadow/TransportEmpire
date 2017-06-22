@@ -18,6 +18,11 @@ Response RouteController::addRoute(const Request& request, db::EntityManager* ma
     qStdOut() << "ADD_ROUTE command. " << threadId() << endl;
 
     Pointer<Route> route = make<Route>(request.getData());
+
+    for(auto& city: route->getStops()){
+        manager->persist(city);
+    }
+    manager->persist(route->getInfo());
     manager->persist(route);
 
     Response response(request);
@@ -34,16 +39,17 @@ Response RouteController::editRoute(const Request& request, db::EntityManager* m
     Response response(request);
 
     auto requestData    = request.getData();
-    auto id             = requestData["id"].toString().toUInt();
-    auto route          = manager->load<Route>(id);
+    auto id             = requestData["id"].toInt();
+    auto route          = manager->load<Route>(quint64(id));
 
     if(route.data() == nullptr) {
         response.setCode(Response::Code::NotFound);
-        return response;
     } else {
-        // TODO: Update
+        Pointer<Route> requestRoute = make<Route>(request.getData());
+        route->update(requestRoute);
         route->update();
     }
+    return response;
 }
 
 Response RouteController::getRoute(const Request& request, db::EntityManager* manager)
@@ -52,12 +58,14 @@ Response RouteController::getRoute(const Request& request, db::EntityManager* ma
 
     Response response(request);
 
-    auto& data  = response.getDataRef();
-    auto id     = data["id"].toString().toUInt();
+    auto requestData  = request.getData();
+    auto id     = requestData["id"].toString().toUInt();
     auto route  = manager->load<Route>(id);
 
+    auto& responseData = response.getDataRef();
+
     if(route.data() != nullptr) {
-        data["route"] = route->toJsonObject();
+        responseData["route"] = route->toJsonObject();
     } else{
         response.setCode(Response::Code::NotFound);
     }
@@ -86,7 +94,6 @@ Response RouteController::getRouteList(const Request& request, db::EntityManager
     }
     else{
         response.setCode(Response::Code::NotFound);
-        responseData["routes"] = "There are no routes in db.";
     }
 
     return response;
