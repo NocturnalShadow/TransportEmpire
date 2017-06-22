@@ -2,9 +2,10 @@
 
 #include "Database/EntityManager.h"
 
+#include "Model/City.h"
+#include "Model/Route.h"
+
 #include "Utility.h"
-#include"Model/City.h"
-#include"Model/Route.h"
 
 namespace srv {
 
@@ -18,6 +19,11 @@ Response RouteController::addRoute(const Request& request, db::EntityManager* ma
     qStdOut() << "ADD_ROUTE command. " << threadId() << endl;
 
     Pointer<Route> route = make<Route>(request.getData());
+
+    for(auto& city: route->getStops()){
+        manager->persist(city);
+    }
+    manager->persist(route->getInfo());
     manager->persist(route);
 
     Response response(request);
@@ -34,16 +40,17 @@ Response RouteController::editRoute(const Request& request, db::EntityManager* m
     Response response(request);
 
     auto requestData    = request.getData();
-    auto id             = (unsigned) requestData["id"].toInt();
-    auto route          = manager->load<Route>(id);
+    auto id             = requestData["id"].toInt();
+    auto route          = manager->load<Route>((uint) id);
 
     if(route.data() == nullptr) {
         response.setCode(Response::Code::NotFound);
-        return response;
     } else {
-        // TODO: Update
+        Pointer<Route> requestRoute = make<Route>(request.getData());
+        route->sync(requestRoute);
         route->update();
     }
+    return response;
 }
 
 Response RouteController::getRoute(const Request& request, db::EntityManager* manager)
@@ -52,9 +59,11 @@ Response RouteController::getRoute(const Request& request, db::EntityManager* ma
 
     Response response(request);
 
-    auto& responseData  = response.getDataRef();
-    auto id             = (unsigned) responseData["id"].toInt();
-    auto route          = manager->load<Route>(id);
+    auto requestData    = request.getData();
+    auto id             = requestData["id"].toInt();
+    auto route          = manager->load<Route>((uint) id);
+
+    auto& responseData = response.getDataRef();
 
     if(route.data() != nullptr) {
         responseData["route"] = route->toJsonObject();
@@ -86,7 +95,6 @@ Response RouteController::getRouteList(const Request& request, db::EntityManager
     }
     else{
         response.setCode(Response::Code::NotFound);
-        responseData["routes"] = "There are no routes in db.";
     }
 
     return response;

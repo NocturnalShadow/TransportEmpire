@@ -13,31 +13,23 @@
 class RouteInfo : public db::Entity
 {
     PERSISTENT
+    friend class Route;
 private:
     Pointer<City> origin;
     Pointer<City> destination;
     double totalDistance;
 
 public:
-
     RouteInfo() = default;
-    RouteInfo(const QJsonObject& route)
-        : totalDistance{ route["total_distance"].toDouble() }
-    {
-    }
+    RouteInfo(const QJsonObject& route);
 
 public:
-    double getDistance() const { return totalDistance; }
+    double getDistance()            const { return totalDistance;   }
+    Pointer<City> getOrigin()       const { return origin;          }
+    Pointer<City> getDestination()  const { return destination;     }
 
 public:
-    QJsonObject toJsonObject() const
-    {
-        QJsonObject info;
-        info["origin"] = origin->toJsonObject();
-        info["destination"] = destination->toJsonObject();
-        info["total_distance"] = totalDistance;
-        return info;
-    }
+    QJsonObject toJsonObject() const;
 };
 
 class Route : public db::Entity
@@ -50,27 +42,16 @@ private:
 
 public:
     Route() = default;
-    Route(const QJsonObject& route)
-        : polyline{ route["polyline"].toString() },
-          stops{ toVector<City>(route["stops"].toArray()) },
-          info{ make<RouteInfo>(route["info"].toObject()) }
-    {
-    }
+    Route(const QJsonObject& route);
 
 public:
-    QJsonObject toJsonObject() const
-    {
-        QJsonObject route;
-        route["id"] = static_cast<int>(this->getId());
-        route["info"] = info->toJsonObject();
-        route["polyline"] = polyline;
-        route["stops"] = toJsonArray(stops);
-        return route;
-    }
+    QJsonObject toJsonObject() const;
 
 public:
-    const Pointer<RouteInfo>& getInfo() const		{ return info; }
-    const QVector<Pointer<City>>& getStops() const	{ return stops; }
+    const Pointer<RouteInfo>& getInfo()         const { return info; }
+    const QVector<Pointer<City>>& getStops()    const { return stops; }
+
+    void sync(Pointer<Route> route);
 
     void Debug() const
         {

@@ -20,20 +20,8 @@ private:
 
 public:
     City() = default;
-
-    City(const QJsonObject& city)
-        : placeID         { city["place_id"].toString() },
-          formatedAddress { city["formatted_address"].toString() },
-          location        { city["loction"].toObject() }
-    {
-    }
-
-    City(const QString& _placeID, const QString& _formatedAddress, const Location& _location)
-        : placeID         { _placeID },
-          formatedAddress { _formatedAddress },
-          location        { _location }
-    {
-    }
+    City(const QJsonObject& city);
+    City(const QString& placeID, const QString& _formatedAddress, const Location& _location);
 
 public:
     const QString&  getID()         const { return placeID; }
@@ -41,14 +29,9 @@ public:
     const Location& getLocation()   const { return location; }
 
 public:
-    QJsonObject toJsonObject() const
-    {
-        QJsonObject city;
-        city["place_id"]            = placeID;
-        city["formatted_address"]   = formatedAddress;
-        city["location"]            = location.toJsonObject();
-        return city;
-    }
+    QJsonObject toJsonObject() const;
+
+    void sync(Pointer<City> city);
 
 public:
     void Debug() const
@@ -62,3 +45,4 @@ public:
 };
 
 #include "City-map.h"
+
