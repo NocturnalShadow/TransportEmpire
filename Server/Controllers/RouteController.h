@@ -13,6 +13,7 @@ public:
 
 private:
     static Response addRoute(const Request& request, db::EntityManager* manager);
+    static Response editRoute(const Request& request, db::EntityManager* manager);
     static Response getRoute(const Request& request, db::EntityManager* manager);
     static Response getRouteList(const Request& request, db::EntityManager* manager);
 

@@ -10,7 +10,7 @@
 
 #include <QDebug>
 
-class RouteInfo: public db::Entity
+class RouteInfo : public db::Entity
 {
     PERSISTENT
 private:
@@ -28,7 +28,7 @@ public:
     QJsonObject toJsonObject() const;
 };
 
-class Route: public db::Entity
+class Route : public db::Entity
 {
     PERSISTENT
 private:
@@ -45,7 +45,6 @@ public:
 public:
     const Pointer<RouteInfo>& getInfo() const{return info;}
     const QVector<Pointer<City>>& getStops() const{return stops;}
-
 
     void Debug() const
     {

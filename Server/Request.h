@@ -43,6 +43,7 @@ private:
 enum Request::Type {
     LOGIN,
     ADD_ROUTE,
+    EDIT_ROUTE,
     GET_ROUTE,
     GET_ROUTE_LIST
 };
