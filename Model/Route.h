@@ -1,6 +1,7 @@
 #pragma once
 
 #include "City.h"
+#include "Database/Entity.h"
 
 #include <QVector>
 #include <QString>
@@ -9,11 +10,12 @@
 
 #include <QDebug>
 
-class RouteInfo
+class RouteInfo: public db::Entity
 {
+    PERSISTENT
 private:
-    City origin;
-    City destination;
+    Pointer<City> origin;
+    Pointer<City> destination;
     double totalDistance;
 
 public:
@@ -26,13 +28,13 @@ public:
     QJsonObject toJsonObject() const;
 };
 
-class Route
+class Route: public db::Entity
 {
+    PERSISTENT
 private:
-    int id;
-    RouteInfo info;
+    Pointer<RouteInfo> info;
     QString polyline;
-    QVector<City> stops;
+    QVector<Pointer<City>> stops;
 
 public:
     Route(const QJsonObject& route);
@@ -41,13 +43,17 @@ public:
     QJsonObject toJsonObject() const;
 
 public:
+    const Pointer<RouteInfo>& getInfo() const{return info;}
+    const QVector<Pointer<City>>& getStops() const{return stops;}
+
+
     void Debug() const
     {
         qDebug().nospace()
-                << "Route (id: "    << id
-                << ", distance: "   << info.getDistance()
-                << ", from: "       << stops.first().getAddress()
-                << ", to: "         << stops.last().getAddress()
+                << "Route ("
+                << ", distance: "   << info->getDistance()
+                << ", from: "       << stops.first()->getAddress()
+                << ", to: "         << stops.last()->getAddress()
                 <<")";
     }
 };

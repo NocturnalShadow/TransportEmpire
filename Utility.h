@@ -5,13 +5,15 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QTextStream>
+#include "Database/Pointer.h"
 
 template<typename T>
-QVector<T> toVector(const QJsonArray& jsonArray)
+QVector<Pointer<T>> toVector(const QJsonArray& jsonArray)
 {
-    QVector<T> vector;
+    QVector<Pointer<T>> vector;
     for(const auto& item : jsonArray) {
-        vector.append(item.toObject());
+        Pointer<T> temp = make<T>(item.toObject());
+        vector.append(temp);
     }
     return std::move(vector);
 }
@@ -21,7 +23,7 @@ QJsonArray toJsonArray(const QVector<T>& vector)
 {
     QJsonArray jsonArray;
     for(const auto& item : vector) {
-        jsonArray.append(item.toJsonObject());
+        jsonArray.append(item->toJsonObject());
     }
     return std::move(jsonArray);
 }

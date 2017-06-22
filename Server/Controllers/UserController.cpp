@@ -19,6 +19,12 @@ Response UserController::login(const Request& request, db::EntityManager* manage
     QJsonObject& data = response.getDataRef();
 
     Pointer<Credentials> specifiedCredentials = make<Credentials>(request.getData());
+
+    QJsonDocument d(request.getData());
+    qStdOut() <<"cred: " << d.toJson(QJsonDocument::Compact) <<endl;
+
+    qStdOut() << "login from site: " << specifiedCredentials->getLogin() << endl;
+
     Pointer<Credentials> databaseCredentials = manager->queryOne<Credentials>(
                     db::Query<Credentials>::login ==  specifiedCredentials->getLogin()
                 );

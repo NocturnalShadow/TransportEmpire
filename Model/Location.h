@@ -12,6 +12,7 @@ public:
 
 public:
     Location() = default;
+    Location(const Location &) = default;
     Location(double _lat, double _lng)
         : lat{ _lat }, lng{ _lng }
     {
