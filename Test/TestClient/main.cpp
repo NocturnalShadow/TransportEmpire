@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     client.connect(QUrl{ "ws://localhost:8080" });
 
     QTest::qWait(2000);     // does not block
-  //QJsonObject message;
+
     QJsonObject message;
 
     message["command"] = LOGIN;
@@ -35,10 +35,10 @@ int main(int argc, char *argv[])
             << client.takeFirstMessage(500).toStdString()
             << std::endl;
 
-    QTest::qWait(100);
+    QTest::qWait(50);
 
     message["command"] = LOGIN;
-    message["data"] = QJsonObject{{"login", "LOGIN"},{ "password", "PASSWORD" } };
+    message["data"] = QJsonObject{ {"login", "LOGIN"}, { "password", "PASSWORD" } };
     client.sendMessage(QJsonDocument{ message }.toJson(QJsonDocument::Compact));
 
     std::cout
@@ -51,17 +51,6 @@ int main(int argc, char *argv[])
 
     message["command"] = LOGIN;
     message["data"] = QJsonObject{{"login", "LOGIN"},{ "password", "PAWORD" } };
-    client.sendMessage(QJsonDocument{ message }.toJson(QJsonDocument::Compact));
-
-    std::cout
-            << "Response: "
-            << client.takeFirstMessage(500).toStdString()
-            << std::endl;
-
-    QTest::qWait(50);
-
-    message["command"] = LOGIN;
-    message["data"] = QJsonObject{ { "credentials", "User credentials." } };
     client.sendMessage(QJsonDocument{ message }.toJson(QJsonDocument::Compact));
 
     std::cout

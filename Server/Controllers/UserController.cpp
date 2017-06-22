@@ -1,10 +1,8 @@
 #include "Server/Controllers/UserController.h"
 #include "Database/EntityManager.h"
-#include "Utility.h"
 #include "Model/Credentials.h"
 #include "Model/User.h"
-
-#include <QTest>
+#include "Utility.h"
 
 namespace srv {
 
@@ -17,35 +15,28 @@ Response UserController::login(const Request& request, db::EntityManager* manage
 {
     qStdOut() << "LOGIN command. " << threadId() << endl;
 
-    QTest::qSleep(400);         // blocks the thread
-    Pointer<Credentials> cred = make<Credentials>(request.getData());
-    auto query{ db::Query<User>::credentials->login ==  cred->getLogin()};
-    Pointer<User> user;
-    user = manager->queryOne<User>(query);
     Response response(request);
-    QJsonObject data;
+    QJsonObject& data = response.getDataRef();
 
-    if(user.data() == nullptr){
+    Pointer<Credentials> specifiedCredentials = make<Credentials>(request.getData());
+    Pointer<Credentials> databaseCredentials = manager->queryOne<Credentials>(
+                    db::Query<Credentials>::login ==  specifiedCredentials->getLogin()
+                );
+
+    if(databaseCredentials == nullptr) {
         response.setCode(Response::Code::Unauthorized);
-        data["error"] = "Wrong login";
-    }
-    else{
-        LazyPointer<Credentials> c = user->getCredentials();
+        data["error"] = "Wrong login.";
+    } else {
+        if(specifiedCredentials->hasPasswordOf(*databaseCredentials))
         {
-            db::Transaction transaction{ manager };
-            c.load();
-        }
-        if(cred->hasPassword(c->getPassword())){
-           response.setCode(Response::Code::OK);
-            response.setRole(c->getRole());
-            data["role"] = static_cast<int>(c->getRole());
-        }
-        else{
+            response.setCode(Response::Code::OK);
+            response.setRole(databaseCredentials->getRole());
+            data["role"] = static_cast<int>(databaseCredentials->getRole());
+        } else {
             response.setCode(Response::Code::Forbidden);
-            data["error"] = "Wrong password";
+            data["error"] = "Wrong password.";
         }
     }
-    response.getDataRef() = data;
     return response;
 }
 

@@ -11,10 +11,8 @@
 
 TransportEmpireApp::TransportEmpireApp(QObject* parent)
     : QObject{ parent },
-      database{ "TransportEmpireDB", "SQLEXPRESS" } // sqlexpress for Karolina's pc
+      database{ "TransportEmpireDB", "SQLEXPRESS" } // special for Karolina's pc
 {
-        database.connect();
-
         qStdOut() << "Native thread: " << threadId() << endl;
 
         auto suite = new srv::ControllerSuite{ &database };
@@ -36,25 +34,24 @@ void TransportEmpireApp::launch()
 
 void TransportEmpireApp::init()
 {
-    db::EntityManager* manager = database.createManagerInstance();
+    database.connect();
+    auto manager = database.createManagerInstance();
     manager->startSession();
-    try{
+
+    try {
         manager->erase<User>();
         manager->erase<Credentials>();
+    } catch(std::exception& e) {
+        qStdOut() << "Exception: " << e.what() <<endl;
     }
-    catch(std::exception& e){
-        qStdOut() << e.what() <<endl;
-    }
-    Pointer<Credentials> adminCredentials = make<Credentials>(Role::ADMIN, "LOGIN", "PASSWORD");
-    Pointer<User> admin = make<User>("Admin", "Admin", adminCredentials);
-    try{
-    manager->persist(adminCredentials);}
-    catch(std::exception& e){
-        qStdOut() << e.what() <<endl;
-    }
-    try{
-        manager->persist(admin);}
-    catch(std::exception& e){
-        qStdOut() << e.what() <<endl;
+
+    Pointer<Credentials> adminCredentials   = make<Credentials>(Role::ADMIN, "LOGIN", "PASSWORD");
+    Pointer<User> admin                     = make<User>("Admin", "Admin", adminCredentials);
+
+    try {
+        manager->persist(adminCredentials);
+        manager->persist(admin);
+    } catch(std::exception& e) {
+        qStdOut() << "Exception: " << e.what() << endl;
     }
 }

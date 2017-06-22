@@ -16,7 +16,9 @@ private:
 
 public:
     explicit TransportEmpireApp(QObject* parent = nullptr);
-    void launch();
+
+public:
     void init();
+    void launch();
 };
 

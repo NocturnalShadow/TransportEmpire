@@ -3,13 +3,11 @@
 #include "Server/Request.h"
 #include "Server/Response.h"
 
+#include "Database/EntityManager.h"
+
 #include <QObject>
 #include <QRunnable>
 #include <QScopedPointer>
-
-namespace db {
-    class EntityManager;
-}
 
 namespace srv {
 
@@ -33,7 +31,9 @@ public:
     }
 
 public:
-    void run() override {
+    void run() override
+    {
+        manager->startSession();
         emit responseReady(handler(*request, manager));
     }
 

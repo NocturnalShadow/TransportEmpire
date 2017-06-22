@@ -24,14 +24,13 @@ public:
     Credentials(QJsonObject credentials);
 
 public:
-    QString getLogin()  const { return login;   }
-    Role getRole()      const { return role;    }
-    QString getPassword() const {return password;}
+    QString getLogin()      const { return login;   }
+    Role getRole()          const { return role;    }
 
     void setRole(Role _role) { role = _role; }
 
-    bool hasPassword(QString _password) const {
-        return password == _password;
+    bool hasPasswordOf(const Credentials& credentials) const {
+        return password == credentials.password;
     }
 
 public:
