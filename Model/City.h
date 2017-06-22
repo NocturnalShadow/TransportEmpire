@@ -31,6 +31,8 @@ public:
 public:
     QJsonObject toJsonObject() const;
 
+    void update(Pointer<City> city);
+
 public:
     void Debug() const
     {

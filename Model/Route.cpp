@@ -4,8 +4,10 @@
 RouteInfo::RouteInfo(const QJsonObject& route)
     : totalDistance{ route["total_distance"].toDouble() }
 {
-    origin = make<City>(route["origin"].toObject());
-    destination = make<City>(route["destination"].toObject());
+    //origin = make<City>(route["origin"].toObject());
+    //destination = make<City>(route["destination"].toObject());
+    origin = nullptr;
+    destination = nullptr;
 }
 
 QJsonObject RouteInfo::toJsonObject() const
@@ -31,4 +33,24 @@ QJsonObject Route::toJsonObject() const {
     route["polyline"] = polyline;
     route["stops"] = toJsonArray(stops);
     return route;
+}
+
+void Route::update(Pointer<Route> route)
+{
+    //routeinfo check
+    Pointer<RouteInfo> routeInfo = route->info;
+    if(info->distance != routeInfo->totalDistance){
+        info->distance = routeInfo->totalDistance;
+    }
+    info->origin->update(routeInfo->origin);
+    info->destination->update(routeInfo->destination);
+
+    //polyline check
+    if(polyline != route->polyline){
+        polyline = route->polyline;
+    }
+    //stops check
+    for(int i = 0; i < stops.size(); i++){
+        stops[i]->update(route->stops[i]);
+    }
 }
