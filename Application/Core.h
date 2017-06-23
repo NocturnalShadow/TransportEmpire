@@ -20,6 +20,7 @@ public:
     explicit Core(QObject* parent = nullptr);
 
 public:
+    void initialize(std::string address, unsigned int port);
     void prepare(std::string login, std::string password);
     void launch();
     void terminate();

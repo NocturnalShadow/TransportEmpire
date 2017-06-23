@@ -7,34 +7,14 @@
 
 #include "Utility.h"
 
+#include <QHostAddress>
+
 namespace app {
 
 Core::Core(QObject* parent)
     : QObject{ parent }
 {
-        qStdOut() << "Native thread: " << threadId() << endl;
-
-        database.reset(new db::RemoteDatabase {
-                "TransportEmpireDB",
-                "sqlexpress2014.cvn90iitbqfj.us-west-2.rds.amazonaws.com",
-                1433
-        });
-
-        auto suite = new srv::ControllerSuite{ database.data() };
-        suite->add<srv::UserController>();
-        suite->add<srv::RouteController>();
-
-        server.reset(srv::Server::build()
-                .name("Test Server")
-                .address(QHostAddress::LocalHost)
-                .port(8080)
-                .controllerSuite(suite)
-                .make()
-        );
-
-        connect(server.data(), &srv::Server::launched, this, &Core::serverLaunched);
-        connect(server.data(), &srv::Server::terminated, this, &Core::serverTerminated);
-        connect(server.data(), &srv::Server::failedToLaunch, this, &Core::serverFailedToLaunch);
+    qStdOut() << "Native thread: " << threadId() << endl;
 }
 
 void Core::launch()
@@ -47,6 +27,34 @@ void Core::terminate()
     server->terminate();
 }
 
+void Core::initialize(std::string address, unsigned int port)
+{
+    //        database.reset(new db::RemoteDatabase {
+    //                "TransportEmpireDB",
+    //                "sqlexpress2014.cvn90iitbqfj.us-west-2.rds.amazonaws.com",
+    //                1433
+    //        });
+
+    database.reset(new db::LocalDatabase { "TransportEmpireDB" });
+
+    auto suite = new srv::ControllerSuite{ database.data() };
+    suite->add<srv::UserController>();
+    suite->add<srv::RouteController>();
+
+    server.reset(srv::Server::build()
+            .name("Test Server")
+            .address(QHostAddress{ QString{ address.c_str() } })
+            .port(port)
+            .securityMode(QWebSocketServer::SslMode::NonSecureMode)
+            .controllerSuite(suite)
+            .make()
+    );
+
+    connect(server.data(), &srv::Server::launched, this, &Core::serverLaunched);
+    connect(server.data(), &srv::Server::terminated, this, &Core::serverTerminated);
+    connect(server.data(), &srv::Server::failedToLaunch, this, &Core::serverFailedToLaunch);
+}
+
 void Core::prepare(std::string login, std::string password)
 {
     try {
@@ -54,11 +62,10 @@ void Core::prepare(std::string login, std::string password)
         auto manager = database->createManagerInstance();
         manager->startSession();
 
-        manager->erase<User>();
-        manager->erase<Credentials>();
+        manager->erase<db::Entity>();
 
-        Pointer<Credentials> adminCredentials   = make<Credentials>(Role::ADMIN, "LOGIN", "PASSWORD");
-        Pointer<User> admin                     = make<User>("Admin", "Admin", adminCredentials);
+        Pointer<Credentials> adminCredentials   = make<Credentials>(Role::ADMIN, "Login", "Password");
+        Pointer<User> admin                     = make<User>("Adminka", "Adminka", adminCredentials);
 
         manager->persist(adminCredentials);
         manager->persist(admin);

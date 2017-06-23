@@ -1,6 +1,6 @@
 #include "Client.h"
 
-#include <QDebug>
+#include "Utility.h"
 
 namespace test {
 
@@ -18,6 +18,7 @@ Client::Client(QObject* parent)
 
 void Client::connect(QUrl url)
 {
+   qStdOut() << "Connecting." << endl;
     socket.open(url);
 }
 
@@ -40,6 +41,7 @@ QString Client::takeFirstMessage(int timeout)
 
 void Client::onConnected()
 {
+    qStdOut() << "Connected." << endl;
 }
 
 void Client::onDisconnected()

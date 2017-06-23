@@ -11,14 +11,16 @@ Route::Route(const QJsonObject& route)
       stops{ toVector<City>(route["stops"].toArray()) }
 {
     info = make<RouteInfo>(route["info"].toObject());
-    info->origin =  stops.front();
-    info->destination = stops.back();
+    if(!stops.isEmpty()) {
+        info->origin = stops.front();
+        info->destination = stops.back();
+    }
 }
 
 QJsonObject Route::toJsonObject() const
 {
     QJsonObject route;
-    route["id"]         = static_cast<int>(this->getId());
+    route["id"]         = static_cast<int>(getId());
     route["info"]       = info->toJsonObject();
     route["polyline"]   = polyline;
     route["stops"]      = toJsonArray(stops);
@@ -28,8 +30,8 @@ QJsonObject Route::toJsonObject() const
 QJsonObject RouteInfo::toJsonObject() const
 {
     QJsonObject info;
-    info["origin"]          = origin->toJsonObject();
-    info["destination"]     = destination->toJsonObject();
+    info["origin"]          = origin        ? origin->toJsonObject() : QJsonObject{};
+    info["destination"]     = destination   ? destination->toJsonObject() : QJsonObject{};
     info["total_distance"]  = totalDistance;
     return info;
 }
@@ -41,8 +43,11 @@ void Route::sync(Pointer<Route> route)
     if(info->totalDistance != routeInfo->totalDistance) {
         info->totalDistance = routeInfo->totalDistance;
     }
-    info->origin->sync(routeInfo->origin);
-    info->destination->sync(routeInfo->destination);
+    if(info->origin && info->destination)
+    {
+        info->origin->sync(routeInfo->origin);
+        info->destination->sync(routeInfo->destination);
+    }
 
     //polyline check
     if(polyline != route->polyline) {

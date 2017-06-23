@@ -71,7 +71,6 @@ SOURCES += \
     Database/Entity-map.cpp                 \
     Model/Credentials.cpp                   \
     Model/Credentials-map.cpp               \
-    Model/User.cpp                          \
     Model/User-map.cpp                      \
     Model/City.cpp                          \
     Model/City-map.cpp                      \

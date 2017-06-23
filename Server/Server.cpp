@@ -15,6 +15,7 @@ Server::Server()
       },
       origin{ QThread::currentThread() }
 {
+    qStdOut() << securityMode << endl;
     connect(connectionManager, &ConnectionManager::newConnection,
             router, &Router::registerConnection);
 }

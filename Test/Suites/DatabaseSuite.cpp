@@ -5,11 +5,12 @@
 
 DatabaseSuite::DatabaseSuite()
 {
-    database = new db::RemoteDatabase {
-            "TransportEmpireTDB",
-            "sqlexpress2014.cvn90iitbqfj.us-west-2.rds.amazonaws.com",
-            1433
-    };
+//    database = new db::RemoteDatabase {
+//            "TransportEmpireTDB",
+//            "sqlexpress2014.cvn90iitbqfj.us-west-2.rds.amazonaws.com",
+//            1433
+//    };
+     database = new db::LocalDatabase{ "TransportEmpireDB" };
 }
 
 void DatabaseSuite::initTestCase()

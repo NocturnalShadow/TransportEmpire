@@ -44,15 +44,26 @@ void TransportEmpire::onLaunchButtonClicked()
 {
     std::string login       = display.getLogin().toStdString();
     std::string password    = display.getPassword().toStdString();
+    std::string address     = display.getAddress().toStdString();
+    unsigned int port       = display.getPort().toUInt();
 
     display.dissableLaunchButton();
     display.setStatus("Status: Launching...");
 
+    core.initialize(address, port);
+    core.launch();
+
     QFuture<void> launch = QtConcurrent::run([=] () {
-        test(login, password);
+        try {
+            test(login, password);
+        } catch (std::exception& e) {
+            qStdOut() << "Exception: " << e.what() << endl;
+        } catch(...) {
+
+        }
         core.prepare(login, password);
     });
-    core.launch();
+
 }
 
 }
